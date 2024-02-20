@@ -1,0 +1,25 @@
+#include <time.h>
+#include <windows.h>
+#include <conio.h>
+#include "cscratch.h"
+
+static long long int my_time(void);
+static void clear_console(void);
+
+struct OS_C_API os = {
+    .sleep = Sleep,
+    .kbhit = kbhit,
+    .getch = getch,
+    .itime = my_time,
+    .clear = clear_console,
+};
+
+time_t my_time()
+{
+    return time(NULL);
+}
+
+void clear_console()
+{
+    system("cls");
+}
