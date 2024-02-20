@@ -1,12 +1,12 @@
 #include "scratch.hpp"
 
-#define DEBUG 0
+#define DEBUG 2
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 using Generator1D = Nonogram::Generator1D;
 using NonogramSolver = Nonogram::Solver;
 
-static void debug_Generator1D_callback(Generator1D::cell_t *line, size_t sz);
+static void debug_Generator1D_callback(Nonogram::Cell *line, size_t sz);
 static long long int counter = 0;
 
 void test_nonogramsolver()
@@ -25,7 +25,7 @@ void test_nonogramsolver()
     }
 }
 
-void debug_Generator1D_callback(Generator1D::cell_t *const line, const size_t line_sz)
+void debug_Generator1D_callback(Nonogram::Cell *const line, const size_t line_sz)
 {
     printf("================\n");
     printf("0123456789ABCDEF\n");
@@ -51,7 +51,7 @@ void debug_Generator1D_callback(Generator1D::cell_t *const line, const size_t li
 void test_nonogramsolverlogic()
 {
     int info[] = { 2, 2, 3, 1, };
-    Generator1D::cell_t line[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    Nonogram::Cell line[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
     Generator1D gen = {};
     bool well_formed = gen.init(line, len(line), info, len(info));
     
@@ -79,7 +79,7 @@ void Generator1D::exec()
     run(line, info_sz, 0, 0);
 }
 
-bool Generator1D::attach(void (*const callback)(Generator1D::cell_t *line, size_t line_sz))
+bool Generator1D::attach(void (*const callback)(Nonogram::Cell *line, size_t line_sz))
 {
     if (callback == nullptr) {
         return false;
@@ -107,7 +107,7 @@ void Generator1D::print() const
     std::cout << std::endl;
 }
 
-bool Generator1D::init(Generator1D::cell_t *const line, const std::size_t line_sz, int *const info, const std::size_t info_sz)
+bool Generator1D::init(Nonogram::Cell *const line, const std::size_t line_sz, int *const info, const std::size_t info_sz)
 {
     this->line_sz = line_sz;
     this->line    = line;
@@ -117,7 +117,7 @@ bool Generator1D::init(Generator1D::cell_t *const line, const std::size_t line_s
     return true;
 }
 
-int Generator1D::run(Generator1D::cell_t *const start, const int depth, const int block_num, const int combo)
+int Generator1D::run(Nonogram::Cell *const start, const int depth, const int block_num, const int combo)
 {
 #if DEBUG
     char char128[128];
@@ -133,7 +133,7 @@ int Generator1D::run(Generator1D::cell_t *const start, const int depth, const in
     }
     else {
         const int block_sz = info[block_num];
-        cell_t *left = start, *right = start;
+        Cell *left = start, *right = start;
         int go = combo, t = 0, res = 0;
 
         if (left + block_sz > line + line_sz) {
@@ -427,7 +427,7 @@ int NonogramSolver::run(Nonogram::Cell *const start_point, const int depth, cons
 #if DEBUG
     char char128[128];
     printf("[CALLED: start_point = %d, depth = %d, i = %d, block_num = %d]\n", start_point - board, depth, i, block_num);
-    printBoard();
+    print();
     printf("\n");
     gets(char128);
 #endif

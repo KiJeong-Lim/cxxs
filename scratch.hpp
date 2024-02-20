@@ -43,12 +43,12 @@ private:
 
 namespace Nonogram {
 
+    typedef int Cell;
+
     class Generator1D {
     public:
-        typedef int cell_t;
-    public:
-        void (*callback)(Generator1D::cell_t *line, size_t line_sz);
-        cell_t *line;
+        void (*callback)(Cell *line, size_t line_sz);
+        Cell *line;
         std::size_t line_sz;
         int *info;
         std::size_t info_sz;
@@ -57,14 +57,12 @@ namespace Nonogram {
         ~Generator1D() = default;
         Generator1D(const Generator1D &other) = default;
         void exec(void);
-        bool attach(void (*callback)(cell_t *line, size_t line_sz));
+        bool attach(void (*callback)(Cell *line, std::size_t line_sz));
         void print(void) const;
-        bool init(Generator1D::cell_t *line, std::size_t line_sz, int *info, std::size_t info_sz);
+        bool init(Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
     private:
-        int run(Generator1D::cell_t *rel_coord, int depth, int block_num, int combo);
+        int run(Cell *rel_coord, int depth, int block_num, int combo);
     };
-
-    typedef int Cell;
 
     static constexpr Cell BLACK = 1;
 
