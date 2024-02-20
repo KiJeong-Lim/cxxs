@@ -6,7 +6,7 @@ template <typename ELEM> using Array = std::vector<ELEM>;
 using Generator1D = Nonogram::Generator1D;
 using NonogramSolver = Nonogram::Solver;
 
-static void debug_Generator1D_callback(Nonogram::Cell *line, size_t sz);
+static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
 static long long int counter = 0;
 
 void test_nonogramsolver()
