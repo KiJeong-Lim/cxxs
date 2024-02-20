@@ -2,17 +2,18 @@
 
 #define DEBUG 0
 
-template <typename A> using Array = std::vector<A>;
-using Generator1D = NonogramSolver::Generator1D;
+template <typename ELEM> using Array = std::vector<ELEM>;
+using Generator1D = Nonogram::Generator1D;
+using NonogramSolver = Nonogram::Solver;
 
 static void debug_Generator1D_callback(Generator1D::cell_t *line, size_t sz);
 static long long int counter = 0;
 
 void test_nonogramsolver()
 {
-    NonogramSolver solver = {};
-    Array<NonogramSolver::Answer> solutions = {};
     int n = 0;
+    NonogramSolver solver = {};
+    Array<Nonogram::Answer> solutions = {};
 
     solver.scanPuzzle("nonogramtest.txt");
     solver.solve();
@@ -29,7 +30,17 @@ void debug_Generator1D_callback(Generator1D::cell_t *const line, const size_t li
     printf("================\n");
     printf("0123456789ABCDEF\n");
     for (int i = 0; i < line_sz; i++) {
-        printf("%d", line[i]);
+        switch (line[i]) {
+        case Nonogram::BLACK:
+            std::cout << '#';
+            break;
+        case Nonogram::WHITE:
+            std::cout << '.';
+            break;
+        default:
+            std::cout << 'E';
+            break;
+        }
     }
     printf("\n");
     printf("================\n");
@@ -39,9 +50,9 @@ void debug_Generator1D_callback(Generator1D::cell_t *const line, const size_t li
 
 void test_nonogramsolverlogic()
 {
-    Generator1D gen = {};
     int info[] = { 2, 2, 3, 1, };
-    Generator1D::cell_t line[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    Generator1D::cell_t line[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    Generator1D gen = {};
     bool well_formed = gen.init(line, len(line), info, len(info));
     
     if (well_formed) {
@@ -99,8 +110,8 @@ void Generator1D::print() const
 bool Generator1D::init(Generator1D::cell_t *const line, const std::size_t line_sz, int *const info, const std::size_t info_sz)
 {
     this->line_sz = line_sz;
-    this->line = line;
-    this->info = info;
+    this->line    = line;
+    this->info    = info;
     this->info_sz = info_sz;
 
     return true;
@@ -108,16 +119,12 @@ bool Generator1D::init(Generator1D::cell_t *const line, const std::size_t line_s
 
 int Generator1D::run(Generator1D::cell_t *const start, const int depth, const int block_num, const int combo)
 {
-#if DEBUG == 2
-    char char128[128];
-    print();
-    gets(char128);
-#endif
-
 #if DEBUG
+    char char128[128];
     printf("[CALLED: depth = %d, start = %d] ", depth, start - line);
     print();
     printf("\n");
+    gets(char128);
 #endif
 
     if (depth == 0) {
@@ -133,9 +140,8 @@ int Generator1D::run(Generator1D::cell_t *const start, const int depth, const in
             return 1;
         }
         
-        for (int b = 0; b < block_sz; b++) {
+        for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
-        }
         
         t = run(right + 1, depth - 1, block_num + 1, combo + 1);
 
@@ -165,27 +171,27 @@ int Generator1D::run(Generator1D::cell_t *const start, const int depth, const in
     }
 }
 
-NonogramSolver::Exception::Exception(const char *const err_msg)
+Nonogram::Exception::Exception(const char *const err_msg)
     : err_msg{ err_msg }
 {
 }
 
-const char *NonogramSolver::Exception::what() const throw ()
+const char *Nonogram::Exception::what() const throw ()
 {
     return err_msg.c_str();
 }
 
-NonogramSolver::~NonogramSolver()
+NonogramSolver::~Solver()
 {
     clear();
 }
 
-NonogramSolver::Answer::Answer(Array<Array<Cell>> board)
+Nonogram::Answer::Answer(Array<Array<Cell>> board)
     : board{ board }
 {
 }
 
-void NonogramSolver::Answer::print() const
+void Nonogram::Answer::print() const
 {
     for (int i = 0; i < board.size(); i++) {
         for (int j = 0; j < board[i].size(); j++) {
@@ -281,7 +287,7 @@ bool NonogramSolver::puzzleWellFormed() const
     return true;
 }
 
-Array<Array<NonogramSolver::Cell>> NonogramSolver::toMatrix() const
+Array<Array<Nonogram::Cell>> NonogramSolver::toMatrix() const
 {
     Array<Array<Cell>> ret = {};
 
@@ -364,7 +370,7 @@ void NonogramSolver::clear()
     solutions.clear();
 }
 
-const Array<NonogramSolver::Answer> &NonogramSolver::getSolutions() const
+const Array<Nonogram::Answer> &NonogramSolver::getSolutions() const
 {
     return solutions;
 }
@@ -416,7 +422,7 @@ bool NonogramSolver::isAnswer()
     return true;
 }
 
-int NonogramSolver::run(NonogramSolver::Cell *const start_point, const int depth, const int i, const int block_num)
+int NonogramSolver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num)
 {
 #if DEBUG
     char char128[128];
@@ -474,12 +480,12 @@ int NonogramSolver::run(NonogramSolver::Cell *const start_point, const int depth
     }
 }
 
-NonogramSolver::Cell &NonogramSolver::at(const int i, const int j)
+Nonogram::Cell &NonogramSolver::at(const int i, const int j)
 {
     return board[i * n + j];
 }
 
-const NonogramSolver::Cell &NonogramSolver::at(const int i, const int j) const
+const Nonogram::Cell &NonogramSolver::at(const int i, const int j) const
 {
     return board[i * n + j];
 }

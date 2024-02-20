@@ -41,8 +41,8 @@ private:
     void sync(char *&msg);
 };
 
-class NonogramSolver {
-public:
+namespace Nonogram {
+
     class Generator1D {
     public:
         typedef int cell_t;
@@ -63,9 +63,13 @@ public:
     private:
         int run(Generator1D::cell_t *rel_coord, int depth, int block_num, int combo);
     };
+
     typedef int Cell;
+
     static constexpr Cell BLACK = 1;
+
     static constexpr Cell WHITE = 0;
+
     class Exception : public std::exception {
         std::string err_msg;
     public:
@@ -74,6 +78,7 @@ public:
         Exception(const Exception &other) = default;
         const char *what(void) const throw ();
     };
+
     class Answer {
         std::vector<std::vector<Cell>> board;
     public:
@@ -82,31 +87,33 @@ public:
         Answer(const Answer &other) = default;
         void print(void) const;
     };
-private:
-    std::vector<std::vector<int>> rows;
-    std::vector<std::vector<int>> cols;
-    Cell *board;
-    int m;
-    int n;
-    std::vector<Answer> solutions;
-public:
-    NonogramSolver() = default;
-    ~NonogramSolver();
-    NonogramSolver(const NonogramSolver &other) = default;
-    bool setPuzzle(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
-    bool puzzleWellFormed(void) const;
-    std::vector<std::vector<Cell>> toMatrix(void) const;
-    bool scanPuzzle(const char *file_name);
-    void clear(void);
-    void solve(void);
-    const std::vector<Answer> &getSolutions(void) const;
-private:
-    bool isAnswer(void);
-    int run(Cell *start_point, int depth, int i, int block_num);
-    Cell &at(int i, int j);
-    const Cell &at(int i, int j) const;
-    void print(void) const;
-};
+
+    class Solver {
+        std::vector<std::vector<int>> rows;
+        std::vector<std::vector<int>> cols;
+        Cell *board;
+        int m;
+        int n;
+        std::vector<Answer> solutions;
+    public:
+        Solver() = default;
+        ~Solver();
+        Solver(const Solver &other) = default;
+        bool setPuzzle(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
+        bool puzzleWellFormed(void) const;
+        std::vector<std::vector<Cell>> toMatrix(void) const;
+        bool scanPuzzle(const char *file_name);
+        void clear(void);
+        void solve(void);
+        const std::vector<Answer> &getSolutions(void) const;
+    private:
+        bool isAnswer(void);
+        int run(Cell *start_point, int depth, int i, int block_num);
+        Cell &at(int i, int j);
+        const Cell &at(int i, int j) const;
+        void print(void) const;
+    };
+}
 
 void test_io(void);
 void test_nonogramsolver(void);
