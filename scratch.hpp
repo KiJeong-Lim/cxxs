@@ -105,7 +105,7 @@ private:
     int run(Cell *start_point, int depth, int i, int block_num);
     Cell &at(int i, int j);
     const Cell &at(int i, int j) const;
-    void printBoard(void) const;
+    void print(void) const;
 };
 
 void test_io(void);

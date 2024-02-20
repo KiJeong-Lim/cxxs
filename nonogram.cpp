@@ -6,6 +6,7 @@ template <typename A> using Array = std::vector<A>;
 using Generator1D = NonogramSolver::Generator1D;
 
 static void debug_Generator1D_callback(Generator1D::cell_t *line, size_t sz);
+static long long int counter = 0;
 
 void test_nonogramsolver()
 {
@@ -33,6 +34,7 @@ void debug_Generator1D_callback(Generator1D::cell_t *const line, const size_t li
     printf("\n");
     printf("================\n");
     printf("\n");
+    counter++;
 }
 
 void test_nonogramsolverlogic()
@@ -45,6 +47,7 @@ void test_nonogramsolverlogic()
     if (well_formed) {
         gen.attach(debug_Generator1D_callback);
         gen.exec();
+        printf("counter = %lld\n", counter);
     }
 }
 
@@ -291,7 +294,7 @@ Array<Array<NonogramSolver::Cell>> NonogramSolver::toMatrix() const
     return ret;
 }
 
-void NonogramSolver::printBoard() const
+void NonogramSolver::print() const
 {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
