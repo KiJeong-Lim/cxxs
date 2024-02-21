@@ -1,6 +1,6 @@
 #include "scratch.hpp"
 
-#define DEBUG 2
+#define DEBUG 0
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 using Generator1D = Nonogram::Generator1D;
@@ -27,8 +27,8 @@ void test_nonogramsolver()
 
 void debug_Generator1D_callback(Nonogram::Cell *const line, const size_t line_sz)
 {
-    printf("================\n");
-    printf("0123456789ABCDEF\n");
+    std::cout << "================\n";
+    std::cout << "0123456789ABCDEF\n";
     for (int i = 0; i < line_sz; i++) {
         switch (line[i]) {
         case Nonogram::BLACK:
@@ -42,9 +42,10 @@ void debug_Generator1D_callback(Nonogram::Cell *const line, const size_t line_sz
             break;
         }
     }
-    printf("\n");
-    printf("================\n");
-    printf("\n");
+    std::cout << std::endl;
+    std::cout << "================\n";
+    std::cout << std::endl;
+
     counter++;
 }
 

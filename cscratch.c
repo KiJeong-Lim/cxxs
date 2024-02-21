@@ -3,18 +3,18 @@
 #include <conio.h>
 #include "cscratch.h"
 
-static long long int my_time(void);
+static long long int longlongint_time(void);
 static void clear_console(void);
 
 struct OS_C_API os = {
     .sleep = Sleep,
     .kbhit = kbhit,
     .getch = getch,
-    .itime = my_time,
+    .itime = longlongint_time,
     .clear = clear_console,
 };
 
-time_t my_time()
+time_t longlongint_time()
 {
     return time(NULL);
 }

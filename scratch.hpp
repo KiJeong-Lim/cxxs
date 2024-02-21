@@ -46,7 +46,6 @@ namespace Nonogram {
     typedef int Cell;
 
     class Generator1D {
-    public:
         void (*callback)(Cell *line, std::size_t line_sz);
         Cell *line;
         std::size_t line_sz;
