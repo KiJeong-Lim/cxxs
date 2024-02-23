@@ -17,8 +17,8 @@ extern "C" {
 
 class IntegerHelper {
 public:
-    static std::vector<int> reads(std::string str);
-    static void shows(std::vector<int> nums);
+    static std::vector<int> reads(const std::string &str);
+    static void shows(const std::vector<int> &nums);
 };
 
 class IO {
@@ -55,9 +55,9 @@ public:
     static constexpr Cell BLACK = 1;
     static constexpr Cell WHITE = 0;
     class Board {
-        Array<Array<Cell>> board;
+        std::vector<std::vector<Cell>> board;
     public:
-        Board(Array<Array<Cell>> board);
+        Board(std::vector<std::vector<Cell>> board);
         void print(void) const;
     };
     class Solver {
@@ -72,7 +72,7 @@ public:
         Solver() = delete;
         ~Solver();
         Solver(const Solver &other) = default;
-        Array<Board> solve(void);
+        std::vector<Board> solve(void);
         void clear(void);
     private:
         bool isAnswer(void);
@@ -100,10 +100,13 @@ public:
         int run(Nonogram::Cell *rel_coord, int depth, int block_num, int combo);
     };
 private:
-    Array<Array<int>> rows;
-    Array<Array<int>> cols;
+    std::vector<std::vector<int>> rows;
+    std::vector<std::vector<int>> cols;
 public:
-    Nonogram(Array<Array<int>> rows, Array<Array<int>> cols);
+    Nonogram(std::vector<std::vector<int>> rows, std::vector<std::vector<int>> cols);
+    Nonogram() = delete;
+    ~Nonogram() = default;
+    Nonogram(const Nonogram &other) = default;
     static Nonogram scan(const char *file_name);
     bool isWellFormed(void) const;
     Solver mksolver(void) const;

@@ -2,8 +2,8 @@
 #define CSCRATCH_H
 
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #define len(xs)         (sizeof(xs)/sizeof((xs)[0]))
