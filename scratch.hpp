@@ -41,32 +41,8 @@ private:
     void sync(char *&msg);
 };
 
-namespace Nonogram {
-
-    typedef int Cell;
-
-    class Generator1D {
-        void (*callback)(Cell *line, std::size_t line_sz);
-        Cell *line;
-        std::size_t line_sz;
-        int *info;
-        std::size_t info_sz;
-    public:
-        Generator1D();
-        ~Generator1D() = default;
-        Generator1D(const Generator1D &other) = default;
-        void exec(void);
-        bool attach(void (*callback)(Cell *line, std::size_t line_sz));
-        void print(void) const;
-        bool init(Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
-    private:
-        int run(Cell *rel_coord, int depth, int block_num, int combo);
-    };
-
-    static constexpr Cell BLACK = 1;
-
-    static constexpr Cell WHITE = 0;
-
+class Nonogram {
+public:
     class Exception : public std::exception {
         std::string err_msg;
     public:
@@ -75,45 +51,68 @@ namespace Nonogram {
         Exception(const Exception &other) = default;
         const char *what(void) const throw ();
     };
-
-    class Answer {
-        std::vector<std::vector<Cell>> board;
+    typedef int Cell;
+    static constexpr Cell BLACK = 1;
+    static constexpr Cell WHITE = 0;
+    class Board {
+        Array<Array<Cell>> board;
     public:
-        Answer(std::vector<std::vector<Cell>> board);
-        ~Answer() = default;
-        Answer(const Answer &other) = default;
+        Board(Array<Array<Cell>> board);
         void print(void) const;
     };
-
     class Solver {
-        std::vector<std::vector<int>> rows;
-        std::vector<std::vector<int>> cols;
+        const std::vector<std::vector<int>> rows;
+        const std::vector<std::vector<int>> cols;
+        const std::size_t m;
+        const std::size_t n;
         Cell *board;
-        int m;
-        int n;
-        std::vector<Answer> solutions;
+        std::vector<Board> solutions;
     public:
-        Solver() = default;
+        Solver(std::vector<std::vector<int>> rows, std::vector<std::vector<int>> cols);
+        Solver() = delete;
         ~Solver();
         Solver(const Solver &other) = default;
-        bool setPuzzle(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
-        bool puzzleWellFormed(void) const;
-        std::vector<std::vector<Cell>> toMatrix(void) const;
-        bool scanPuzzle(const char *file_name);
+        Array<Board> solve(void);
         void clear(void);
-        void solve(void);
-        const std::vector<Answer> &getSolutions(void) const;
     private:
         bool isAnswer(void);
         int run(Cell *start_point, int depth, int i, int block_num);
         Cell &at(int i, int j);
         const Cell &at(int i, int j) const;
         void print(void) const;
+        std::vector<std::vector<Cell>> toMatrix(void) const;
     };
-}
+    class Generator1D {
+        void (*callback)(Nonogram::Cell *line, std::size_t line_sz);
+        Nonogram::Cell *line;
+        std::size_t line_sz;
+        int *info;
+        std::size_t info_sz;
+    public:
+        Generator1D();
+        ~Generator1D() = default;
+        Generator1D(const Generator1D &other) = default;
+        void exec(void);
+        bool attach(void (*callback)(Nonogram::Cell *line, std::size_t line_sz));
+        void print(void) const;
+        bool init(Nonogram::Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
+    private:
+        int run(Nonogram::Cell *rel_coord, int depth, int block_num, int combo);
+    };
+private:
+    Array<Array<int>> rows;
+    Array<Array<int>> cols;
+public:
+    Nonogram(Array<Array<int>> rows, Array<Array<int>> cols);
+    static Nonogram scan(const char *file_name);
+    bool isWellFormed(void) const;
+    Solver mksolver(void) const;
+};
 
 void test_io(void);
 void test_nonogramsolver(void);
 void test_nonogramsolverlogic(void);
+
+template <typename ELEM> using Array = std::vector<ELEM>;
 
 #endif
