@@ -70,9 +70,8 @@ void Nonogram::Generator1D::exec()
     int block_cnt = 0;
     bool last_was_black = false;
 
-    for (int i = 0; i < line_sz; i++) {
+    for (int i = 0; i < line_sz; i++)
         line[i] = WHITE;
-    }
 
     run(line, info_sz, 0, 0);
 }
@@ -224,11 +223,11 @@ Nonogram Nonogram::scan(const char *const file_name)
     try {
         file.open(file_name, std::ios::in);
         if (file.bad()) {
-            throw Exception("***scanPuzzle: cannot open the file\n");
+            throw Exception("***Nonogram::scan(): cannot open the file\n");
         }
         getline(file, line);
         if (line != std::string{ "rows" }) {
-            throw Exception("***scanPuzzle: expected \'rows\'\n");
+            throw Exception("***Nonogram::scan(): expected \'rows\'\n");
         }
         while (getline(file, line)) {
             if (line == std::string{ "cols" })
@@ -252,7 +251,7 @@ Nonogram Nonogram::scan(const char *const file_name)
 
 bool Nonogram::isWellFormed() const
 {
-    const int m = rows.size(), n = cols.size();
+    const std::size_t m = rows.size(), n = cols.size();
     int t = 0;
 
     if (m == 0 || n == 0)
@@ -305,20 +304,16 @@ Nonogram::Solver Nonogram::mksolver() const
     if (isWellFormed())
         return Solver{ rows, cols };
     else
-        throw Exception("puzzle not well formed");
+        throw Exception("***Nonogram::mksolver(): puzzle not well formed\n");
 }
 
-Nonogram::Solver::Solver(const std::vector<std::vector<int>> rows, const std::vector<std::vector<int>> cols)
+Nonogram::Solver::Solver(const Array<Array<int>> rows, const Array<Array<int>> cols)
     : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, board{ nullptr }, solutions{ }
 {
-    if (rows.size() != m)
-        throw Exception("*** rows.size() != m\n");
-    if (cols.size() != n)
-        throw Exception("*** cols.size() != n\n");
     if (m > 0 && n > 0)
         board = new Cell [m * n];
     else
-        throw Exception("*** !(m > 0 && n > 0)\n");
+        throw Exception("***Nonogram::Solver::Solver(): m == 0 || n == 0\n");
 }
 
 Array<Nonogram::Board> Nonogram::Solver::solve()

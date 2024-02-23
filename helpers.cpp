@@ -1,29 +1,26 @@
 #include "scratch.hpp"
 
-std::vector<int> IntegerHelper::reads(const std::string str)
+std::vector<int> IntegerHelper::reads(const std::string &str)
 {
-    std::stringstream ss;
-    std::vector<int> ret;
-    std::string temp;
-    int found;
+    std::stringstream ss = static_cast<std::stringstream &&>(std::stringstream{} << str);
+    std::vector<int> xs = {};
+    std::string s = "";
+    int x = 0;
 
-    ss << str;
     while (!ss.eof()) {
-        ss >> temp;
-        if (std::stringstream(temp) >> found) {
-            ret.push_back(found);
-        }
-        temp = "";
+        ss >> s;
+        if (std::stringstream(s) >> x)
+            xs.push_back(x);
+        s = "";
     }
 
-    return ret;
+    return xs;
 }
 
-void IntegerHelper::shows(std::vector<int> ns)
+void IntegerHelper::shows(const std::vector<int> &ns)
 {
-    const size_t sz = ns.size();
-    for (int i = 0; i < sz; i++) {
+    const std::size_t l = ns.size();
+    for (std::size_t i = 0; i < l; i++)
         std::cout << ns[i] << ' ';
-    }
     std::cout << std::endl;
 }
