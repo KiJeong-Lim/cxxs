@@ -23,8 +23,8 @@ public:
 
 class IO {
     char buffer[64];
-    int  cursor;
-    int  theend;
+    int cursor;
+    int theend;
     char *result;
     void (*prompt)(const char *msg);
 public:
@@ -83,8 +83,8 @@ public:
         std::vector<std::vector<Cell>> toMatrix(void) const;
     };
     class Generator1D {
-        void (*callback)(Nonogram::Cell *line, std::size_t line_sz);
-        Nonogram::Cell *line;
+        void (*callback)(Cell *line, std::size_t line_sz);
+        Cell *line;
         std::size_t line_sz;
         int *info;
         std::size_t info_sz;
@@ -93,11 +93,11 @@ public:
         ~Generator1D() = default;
         Generator1D(const Generator1D &other) = default;
         void exec(void);
-        bool attach(void (*callback)(Nonogram::Cell *line, std::size_t line_sz));
+        bool attach(void (*callback)(Cell *line, std::size_t line_sz));
         void print(void) const;
-        bool init(Nonogram::Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
+        bool init(Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
     private:
-        int run(Nonogram::Cell *rel_coord, int depth, int block_num, int combo);
+        int run(Cell *rel_coord, int depth, int block_num, int combo);
     };
 private:
     std::vector<std::vector<int>> rows;

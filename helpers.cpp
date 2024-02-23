@@ -22,5 +22,5 @@ void IntegerHelper::shows(const std::vector<int> &ns)
     const std::size_t l = ns.size();
     for (std::size_t i = 0; i < l; i++)
         std::cout << ns[i] << ' ';
-    std::cout << std::endl;
+    std::cout << '\n';
 }
