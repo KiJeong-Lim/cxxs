@@ -4,6 +4,7 @@
 
 static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
 static long long int counter = 0;
+static long long int call_num = 0;
 
 void test_nonogramsolver(void);
 void test_nonogramsolverlogic(void);
@@ -118,10 +119,11 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
 {
 #if DEBUG
     char char128[128];
-    printf("[CALLED: depth = %d, start = %d] ", depth, start - line);
+    printf("[CALLED: depth = %d, start = %d, block_num = %d, combo = %d, call_num = %d] ", depth, start - line, block_num, combo, call_num);
     print();
     printf("\n");
     gets(char128);
+    call_num++;
 #endif
 
     if (depth == 0) {
@@ -139,8 +141,17 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
         
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
-        
-        t = run(right + 1, depth - 1, block_num + 1, combo + 1);
+
+        if (right + block_sz == line + line_sz) {
+            t = run(right + 1, depth - 1, block_num + 1, combo + 1);
+            if (t > combo) {
+                while (right > start)
+                    *--right = WHITE;
+                return combo + 1;
+            }
+        }
+        else
+            t = run(right + 1, depth - 1, block_num + 1, combo + 1);
 
         switch (t) {
         case 0:
@@ -148,9 +159,8 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
                 *left++ = WHITE;
                 *right++ = BLACK;
                 t = run(right + 1, depth - 1, block_num + 1, 0);
-                if (t > 0) {
+                if (t > 0)
                     break;
-                }
             }
         case 1:
             while (right > left)
@@ -164,6 +174,10 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
             while (right > left)
                 *--right = WHITE;
         }
+#if DEBUG
+        printf("[REWIND] call_num = %d, res = %d, combo = %d\n", call_num, res, combo);
+        gets(char128);
+#endif
         return res;
     }
 }
