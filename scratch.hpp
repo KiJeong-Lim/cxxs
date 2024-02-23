@@ -76,7 +76,7 @@ public:
         void clear(void);
     private:
         bool isAnswer(void);
-        int run(Cell *start_point, int depth, int i, int block_num);
+        int run(Cell *start_point, int depth, int i, int block_num, int combo);
         Cell &at(int i, int j);
         const Cell &at(int i, int j) const;
         void print(void) const;

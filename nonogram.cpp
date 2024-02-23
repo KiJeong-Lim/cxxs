@@ -337,7 +337,7 @@ Array<Nonogram::Board> Nonogram::Solver::solve()
         num += rows[i].size();
     for (int i = 0; i < m * n; i++)
         board[i] = WHITE;
-    run(board, num, 0, 0);
+    run(board, num, 0, 0, 0);
     return solutions;
 }
 
@@ -430,7 +430,7 @@ Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
     return ret;
 }
 
-int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num)
+int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num, const int combo)
 {
 #if DEBUG
     char char128[128];
@@ -444,18 +444,18 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
         if (isAnswer())
             solutions.push_back(Board{toMatrix()});
 
-        return 1;
+        return 0;
     }
     else {
         const int block_sz = rows[i][block_num], next_depth = depth - 1;
         Cell *left = start_point, *right = start_point, *next_floor = nullptr;
-        int next_i = i, next_block_num = block_num + 1;
+        int next_i = i, next_block_num = block_num + 1, t = 0, res = 0;
 
         if (rows[i].size() == 1 && rows[i][0] == 0)
-            return run(&board[(i + 1) * n], next_depth, i + 1, 0);
+            return run(&board[(i + 1) * n], next_depth, i + 1, 0, combo + 1);
 
         if (left + block_sz > &board[(i + 1) * n])
-            return 0;
+            return 1;
 
         if (block_num + 1 == rows[i].size()) {
             next_i = i + 1;
@@ -465,25 +465,35 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
 
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
-
+            
         if (next_floor == nullptr)
-            while (run(right + 1, next_depth, next_i, next_block_num)) {
-                if (right >= &board[(i + 1) * n])
-                    break;
-                *left++ = WHITE;
-                *right++ = BLACK;
-            }
+            t = run(right + 1, next_depth, next_i, next_block_num, combo + 1);
         else
-            while (run(next_floor, next_depth, next_i, next_block_num)) {
-                if (right >= &board[(i + 1) * n])
-                    break;
+            t = run(next_floor, next_depth, next_i, next_block_num, combo + 1);
+
+        switch (t) {
+        case 0:
+            while (right < &board[(i + 1) * n]) {
                 *left++ = WHITE;
                 *right++ = BLACK;
+                if (next_floor == nullptr)
+                    t = run(right + 1, next_depth, next_i, next_block_num, 0);
+                else
+                    t = run(next_floor, next_depth, next_i, next_block_num, 0);
+                if (t)
+                    break;
             }
-
-        while (right > left)
-            *--right = WHITE;
-
-        return 1;
+        case 1:
+            while (right > left)
+                *--right = WHITE;
+            return 0;
+        default:
+            while (right > left)
+                *--right = WHITE;
+            if (t > combo)
+                return combo + 1;
+            else
+                return 1;
+        }
     }
 }
