@@ -56,7 +56,7 @@ void test_nonogramsolverlogic()
     if (well_formed) {
         gen.attach(debug_Generator1D_callback);
         gen.exec();
-        printf("counter = %lld\n", counter);
+        std::cout << "counter = " << counter << std::endl;
     }
 }
 
@@ -116,12 +116,14 @@ bool Nonogram::Generator1D::init(Nonogram::Cell *const line, const std::size_t l
 
 int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, const int block_num)
 {
-#if DEBUG
+#if defined(DEBUG)
+#if DEBUG > 0
     char char128[128];
     printf("[CALLED: depth = %d, start = %d, block_num = %d] ", depth, start - line, block_num);
     print();
     printf("\n");
     gets(char128);
+#endif
 #endif
 
     if (depth == 0) {
@@ -309,7 +311,7 @@ Array<Nonogram::Board> Nonogram::Solver::solve()
         num += rows[i].size();
     for (int i = 0; i < m * n; i++)
         board[i] = WHITE;
-    run(board, num, 0, 0, 0);
+    run(board, num, 0, 0);
     return solutions;
 }
 
@@ -402,21 +404,23 @@ Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
     return ret;
 }
 
-int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num, const int combo)
+int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num)
 {
-#if DEBUG
+#if defined(DEBUG)
+#if DEBUG > 0
     char char128[128];
     printf("[CALLED: start_point = %d, depth = %d, i = %d, block_num = %d]\n", start_point - board, depth, i, block_num);
     print();
     printf("\n");
     gets(char128);
 #endif
+#endif
 
     if (depth == 0) {
         if (isAnswer())
             solutions.push_back(Board{toMatrix()});
 
-        return 0;
+        return 1;
     }
     else {
         const int block_sz = rows[i][block_num], next_depth = depth - 1;
@@ -424,10 +428,10 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
         int next_i = i, next_block_num = block_num + 1, t = 0, res = 0;
 
         if (rows[i].size() == 1 && rows[i][0] == 0)
-            return run(&board[(i + 1) * n], next_depth, i + 1, 0, combo + 1);
+            return run(&board[(i + 1) * n], next_depth, i + 1, 0);
 
         if (left + block_sz > &board[(i + 1) * n])
-            return 1;
+            return 0;
 
         if (block_num + 1 == rows[i].size()) {
             next_i = i + 1;
@@ -437,35 +441,27 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
 
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
-            
-        if (next_floor == nullptr)
-            t = run(right + 1, next_depth, next_i, next_block_num, combo + 1);
-        else
-            t = run(next_floor, next_depth, next_i, next_block_num, combo + 1);
 
-        switch (t) {
-        case 0:
-            while (right < &board[(i + 1) * n]) {
+        if (next_floor == nullptr) {
+            while (run(right + 1, next_depth, next_i, next_block_num)) {
+                if (right >= &board[(i + 1) * n])
+                    break;
                 *left++ = WHITE;
                 *right++ = BLACK;
-                if (next_floor == nullptr)
-                    t = run(right + 1, next_depth, next_i, next_block_num, 1);
-                else
-                    t = run(next_floor, next_depth, next_i, next_block_num, 1);
-                if (t)
-                    break;
             }
-        case 1:
-            while (right > left)
-                *--right = WHITE;
-            return 0;
-        default:
-            while (right > left)
-                *--right = WHITE;
-            if (t > combo)
-                return combo + 1;
-            else
-                return 1;
         }
+        else {
+            while (run(next_floor, next_depth, next_i, next_block_num)) {
+                if (right >= &board[(i + 1) * n])
+                    break;
+                *left++ = WHITE;
+                *right++ = BLACK;
+            }
+        }
+
+        while (right > left)
+            *--right = WHITE;
+
+        return 1;
     }
 }

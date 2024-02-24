@@ -93,7 +93,7 @@ public:
         void clear(void);
     private:
         bool isAnswer(void);
-        int run(Cell *start_point, int depth, int i, int block_num, int combo);
+        int run(Cell *start_point, int depth, int i, int block_num);
         Cell &at(int i, int j);
         const Cell &at(int i, int j) const;
         void print(void) const;
