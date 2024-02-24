@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define len(xs)         (sizeof(xs)/sizeof((xs)[0]))
+#define len(xs)     (sizeof(xs)/sizeof((xs)[0]))
 
 struct OS_C_API {
     void (*sleep)(long unsigned int sleeping_time);

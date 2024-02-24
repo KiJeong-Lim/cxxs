@@ -2,11 +2,10 @@
 
 #define DEBUG 0
 
-static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
-static long long int counter = 0;
+template <typename ELEM> using Array = std::vector<ELEM>;
 
-void test_nonogramsolver(void);
-void test_nonogramsolverlogic(void);
+static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
+static long long int generator1d_callback_call_count = 0;
 
 void test_nonogramsolver()
 {
@@ -43,7 +42,7 @@ void debug_Generator1D_callback(Nonogram::Cell *const line, const size_t line_sz
     std::cout << "================\n";
     std::cout << std::endl;
 
-    counter++;
+    generator1d_callback_call_count++;
 }
 
 void test_nonogramsolverlogic()
@@ -56,8 +55,10 @@ void test_nonogramsolverlogic()
     if (well_formed) {
         gen.attach(debug_Generator1D_callback);
         gen.exec();
-        std::cout << "counter = " << counter << std::endl;
+        std::cout << "count = " << generator1d_callback_call_count << std::endl;
     }
+    else
+        std::cout << "***test_nonogramsolverlogic: ill-formed\n";
 }
 
 Nonogram::Generator1D::Generator1D()
@@ -425,7 +426,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
     else {
         const int block_sz = rows[i][block_num], next_depth = depth - 1;
         Cell *left = start_point, *right = start_point, *next_floor = nullptr;
-        int next_i = i, next_block_num = block_num + 1, t = 0, res = 0;
+        int next_i = i, next_block_num = block_num + 1, res = 0;
 
         if (rows[i].size() == 1 && rows[i][0] == 0)
             return run(&board[(i + 1) * n], next_depth, i + 1, 0);

@@ -2,12 +2,12 @@
 
 std::vector<int> IntegerHelper::reads(const std::string &str)
 {
-    int x = 0;
-    std::string s = "";
     std::stringstream ss = static_cast<std::stringstream &&>(std::stringstream{ } << str);
     std::vector<int> xs = {};
+    std::string s = "";
 
     while (!ss.eof()) {
+        int x = 0;
         ss >> s;
         if (std::stringstream{ s } >> x)
             xs.push_back(x);

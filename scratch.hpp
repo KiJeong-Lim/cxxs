@@ -116,6 +116,4 @@ void test_io(void);
 void test_nonogramsolver(void);
 void test_nonogramsolverlogic(void);
 
-template <typename ELEM> using Array = std::vector<ELEM>;
-
 #endif
