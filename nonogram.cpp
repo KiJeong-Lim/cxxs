@@ -1,6 +1,6 @@
 #include "scratch.hpp"
 
-#define DEBUG 2
+#define DEBUG 0
 
 static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
 static long long int counter = 0;
@@ -73,7 +73,7 @@ void Nonogram::Generator1D::exec()
     for (int i = 0; i < line_sz; i++)
         line[i] = WHITE;
 
-    run(line, info_sz, 0, 0);
+    run(line, info_sz, 0);
 }
 
 bool Nonogram::Generator1D::attach(void (*const callback)(Nonogram::Cell *line, size_t line_sz))
@@ -107,18 +107,18 @@ void Nonogram::Generator1D::print() const
 bool Nonogram::Generator1D::init(Nonogram::Cell *const line, const std::size_t line_sz, int *const info, const std::size_t info_sz)
 {
     this->line_sz = line_sz;
-    this->line    = line;
-    this->info    = info;
+    this->line = line;
+    this->info = info;
     this->info_sz = info_sz;
 
     return true;
 }
 
-int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, const int block_num, const int combo)
+int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, const int block_num)
 {
 #if DEBUG
     char char128[128];
-    printf("[CALLED: depth = %d, start = %d, block_num = %d, combo = %d] ", depth, start - line, block_num, combo);
+    printf("[CALLED: depth = %d, start = %d, block_num = %d] ", depth, start - line, block_num);
     print();
     printf("\n");
     gets(char128);
@@ -126,38 +126,31 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
 
     if (depth == 0) {
         callback(line, line_sz);
-        return 0;
+        return 1;
     }
     else {
         const int block_sz = info[block_num];
         Cell *left = start, *right = start;
-        int go = combo, t = 0, res = 0, s = 0;
+        int t = 0, res = 0, s = 0;
 
         if (left + block_sz > line + line_sz) {
-            return 1;
+            return 0;
         }
         
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
 
-        t = run(right + 1, depth - 1, block_num + 1, combo + 1);
-
-        switch (t) {
-        case 0:
-            while (right < line + line_sz) {
-                *left++ = WHITE;
-                *right++ = BLACK;
-                t = run(right + 1, depth - 1, block_num + 1, 0);
-                if (t > 0) {
-                    break;
-                }
-            }
-            while (right > left)
-                *--right = WHITE;
-            break;
+        while (run(right + 1, depth - 1, block_num + 1)) {
+            if (right >= line + line_sz)
+                break;
+            *left++ = WHITE;
+            *right++ = BLACK;
         }
 
-        return 0;
+        while (right > left)
+            *--right = WHITE;
+
+        return 1;
     }
 }
 
