@@ -4,8 +4,166 @@
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 
+class Nonogram {
+public:
+    class Exception : public std::exception {
+        std::string err_msg;
+    public:
+        Exception(const char *err_msg);
+        ~Exception() = default;
+        Exception(const Exception &other) = default;
+        const char *what(void) const throw ();
+    };
+    typedef int Cell;
+    static constexpr Cell BLACK = 1;
+    static constexpr Cell WHITE = 0;
+    class Generator1D {
+        void (*callback)(Cell *line, std::size_t line_sz);
+        Cell *line;
+        std::size_t line_sz;
+        int *info;
+        std::size_t info_sz;
+    public:
+        Generator1D();
+        ~Generator1D() = default;
+        Generator1D(const Generator1D &other) = default;
+        void exec(void);
+        bool attach(void (*callback)(Cell *line, std::size_t line_sz));
+        void print(void) const;
+        bool init(Cell *line, std::size_t line_sz, int *info, std::size_t info_sz);
+    private:
+        int run(Cell *rel_coord, int depth, int block_num);
+    };
+    class Board {
+        std::vector<std::vector<Cell>> board;
+    public:
+        Board(std::vector<std::vector<Cell>> board);
+        void print(void) const;
+    };
+    class Solver {
+        const std::vector<std::vector<int>> rows;
+        const std::vector<std::vector<int>> cols;
+        const std::size_t m;
+        const std::size_t n;
+        Cell *board;
+        std::vector<Board> solutions;
+    public:
+        Solver(std::vector<std::vector<int>> rows, std::vector<std::vector<int>> cols);
+        Solver() = delete;
+        ~Solver();
+        Solver(const Solver &other) = default;
+        std::vector<Board> solve(void);
+        void clear(void);
+    private:
+        bool isAnswer(void);
+        int run(Cell *start_point, int depth, int i, int block_num);
+        Cell &at(int i, int j);
+        const Cell &at(int i, int j) const;
+        void print(void) const;
+        std::vector<std::vector<Cell>> toMatrix(void) const;
+    };
+    class SolverV2 {
+    public:
+        static constexpr Cell Sharp = 1;
+        static constexpr Cell Empty = -1;
+        static constexpr Cell Unknown = 0;
+    private:
+        const std::vector<std::vector<int>> rows;
+        const std::vector<std::vector<int>> cols;
+        const std::size_t m;
+        const std::size_t n;
+        std::vector<int> rows_changed;
+        std::vector<int> rows_done;
+        std::vector<int> cols_changed;
+        std::vector<int> cols_done;
+        bool solved;
+        Cell *board;
+    public:
+        SolverV2(std::vector<std::vector<int>> rows, std::vector<std::vector<int>> cols);
+        ~SolverV2();
+        bool solve(void);
+        void print(void) const;
+        Cell &at(int i, int j);
+        const Cell &at(int i, int j) const;
+    };
+private:
+    std::vector<std::vector<int>> rows;
+    std::vector<std::vector<int>> cols;
+public:
+    Nonogram(std::vector<std::vector<int>> rows, std::vector<std::vector<int>> cols);
+    Nonogram() = delete;
+    ~Nonogram() = default;
+    Nonogram(const Nonogram &other) = default;
+    static Nonogram scan(const char *file_name);
+    bool isWellFormed(void) const;
+    Solver mksolver(void) const;
+    SolverV2 mksolverv2(void) const;
+};
+
 static void debug_Generator1D_callback(Nonogram::Cell *line, std::size_t sz);
 static long long int generator1d_callback_call_count = 0;
+
+Nonogram::SolverV2::SolverV2(const std::vector<std::vector<int>> rows, const std::vector<std::vector<int>> cols)
+    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_changed{ std::vector<int>(m, 0) }, rows_done{ std::vector<int>(m, 0) }, cols_changed{ std::vector<int>(n, 0) }, cols_done{ std::vector<int>(n, 0) }, solved{ false }, board{ nullptr }
+{
+    board = new Cell [m * n];
+
+    for (std::size_t i = 0; i < m; i++)
+        for (std::size_t j = 0; j < n; j++)
+            at(i, j) = Unknown;
+}
+
+Nonogram::SolverV2::~SolverV2()
+{
+    delete board;
+    board = nullptr;
+}
+
+bool Nonogram::SolverV2::solve()
+{
+    // to do
+
+    return solved;
+}
+
+void Nonogram::SolverV2::print() const
+{
+    if (solved) {
+        for (std::size_t i = 0; i < m; i++) {
+            for (std::size_t j = 0; j < n; j++) {
+                switch (at(i, j)) {
+                case Sharp:
+                    std::cout << '#';
+                    break;
+                case Empty:
+                    std::cout << '.';
+                    break;
+                case Unknown:
+                    std::cout << '?';
+                    break;
+                default:
+                    std::cout << 'E';
+                    break;
+                }
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    else
+        std::cout << "***Nonogram::SolverV2::print: not solved\n";
+}
+
+Nonogram::Cell &Nonogram::SolverV2::at(const int i, const int j)
+{
+    return board[i * n + j];
+}
+
+
+const Nonogram::Cell &Nonogram::SolverV2::at(const int i, const int j) const
+{
+    return board[i * n + j];
+}
 
 void test_nonogramsolver()
 {
@@ -15,6 +173,19 @@ void test_nonogramsolver()
         Array<Nonogram::Board> solutions = solver.solve();
         for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
             sol->print();
+    }
+    catch (const std::exception &e) {
+        std::cerr << e.what();
+    }
+}
+
+void test_nonogramsolverv2()
+{
+    try {
+        Nonogram puzzle = Nonogram::scan("nonogramtest.txt");
+        Nonogram::SolverV2 solver = puzzle.mksolverv2();
+        solver.solve();
+        solver.print();
     }
     catch (const std::exception &e) {
         std::cerr << e.what();
@@ -58,7 +229,7 @@ void test_nonogramsolverlogic()
         std::cout << "count = " << generator1d_callback_call_count << std::endl;
     }
     else
-        std::cout << "***test_nonogramsolverlogic: ill-formed\n";
+        std::cout << "***test_nonogramsolverlogic(): ill-formed\n";
 }
 
 Nonogram::Generator1D::Generator1D()
@@ -294,6 +465,14 @@ Nonogram::Solver Nonogram::mksolver() const
         return Solver{ rows, cols };
     else
         throw Exception("***Nonogram::mksolver(): puzzle not well formed\n");
+}
+
+Nonogram::SolverV2 Nonogram::mksolverv2() const
+{
+    if (isWellFormed())
+        return SolverV2{ rows, cols };
+    else
+        throw Exception("***Nonogram::mksolverv2(): puzzle not well formed\n");
 }
 
 Nonogram::Solver::Solver(const Array<Array<int>> rows, const Array<Array<int>> cols)
