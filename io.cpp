@@ -1,6 +1,7 @@
 #include "scratch.hpp"
 
-#define ESC 	        27
+#define ESC             27
+#define DIRECTION_KEY   224
 #define LEFT_DIRECTION  75
 #define RIGHT_DIRECTION 77
 
@@ -113,7 +114,7 @@ bool IO::takech(const int ch)
         printf("\n");
         result = NULL;
         return true;
-    case 224:
+    case DIRECTION_KEY:
         if (theend + 1 >= len(buffer)) {
             result = NULL;
             return false;
