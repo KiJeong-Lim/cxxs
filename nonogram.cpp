@@ -510,9 +510,9 @@ Nonogram::SolverV2::Generator::~Generator()
     line = nullptr;
 }
 
-bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const std::size_t depth, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &result)
+bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &result)
 {
-    if (depth == info.size()) {
+    if (block_num == info.size()) {
         bool compatible = true;
 
         for (std::size_t i = 0; i < line_sz; i++) {
@@ -538,16 +538,16 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
         return true;
     }
     else {
-        const std::size_t block_sz = info[block_num], next_depth = depth + 1;
+        const int block_sz = info[block_num];
         Cell *left = start_point, *right = start_point;
 
-        if (left + block_sz > line + line_sz)
+        if (start_point + block_sz > line + line_sz)
             return false;
 
-        for (std::size_t b = 0; b < block_sz; b++)
+        for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
 
-        while (run(right + 1, next_depth, block_num + 1, line_ref, result)) {
+        while (run(right + 1, block_num + 1, line_ref, result)) {
             if (right >= line + line_sz)
                 break;
             *left++ = WHITE;
@@ -564,7 +564,7 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
 Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const Array<Nonogram::SolverV2::Value_t> &line_ref)
 {
     Array<Array<Cell>> result = {};
-    run(line, 0, 0, line_ref, result);
+    run(line, 0, line_ref, result);
     return result;
 }
 
@@ -579,15 +579,12 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
             Array<Cell> xs_i = {};
             for (std::size_t k = 0; k < possiblities.size(); k++)
                 xs_i.push_back(possiblities[k][i]);
-            if (xs_i == std::vector<Cell>(xs_i.size(), BLACK)) {
+            if (xs_i == std::vector<Cell>(xs_i.size(), BLACK))
                 new_line.push_back(Sharp);
-            }
-            else if (xs_i == std::vector<Cell>(xs_i.size(), WHITE)) {
+            else if (xs_i == std::vector<Cell>(xs_i.size(), WHITE))
                 new_line.push_back(Empty);
-            }
-            else {
+            else
                 new_line.push_back(Unknown);
-            }
         }
         else
             new_line.push_back(line[i]);

@@ -156,7 +156,7 @@ public:
             std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &line_ref);
         private:
             Generator() = delete;
-            bool run(Cell *start_point, std::size_t depth, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &result);
+            bool run(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &result);
         };
     };
 private:
