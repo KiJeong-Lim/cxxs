@@ -605,7 +605,7 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
         bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        const Array<Value_t> & new_line = solveLine(line, rows[i]);
+        const Array<Value_t> &new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t j = 0; j < n; j++)
