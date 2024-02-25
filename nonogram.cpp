@@ -312,7 +312,6 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
 {
     if (isWellFormed()) {
         Array<Array<int>> rows = this->rows, cols = this->cols;
-        
         for (std::size_t i = 0; i < rows.size(); i++) {
             if (rows[i].size() == 1 && rows[i][0] == 0)
                 rows[i] = std::vector<int>{ };
@@ -321,7 +320,6 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
             if (cols[j].size() == 1 && cols[j][0] == 0)
                 cols[j] = std::vector<int>{ };
         }
-
         return SolverV2{ .rows = rows, .cols = cols };
     }
     else
@@ -427,7 +425,6 @@ bool Nonogram::Solver::isAnswer()
 Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
 {
     Array<Array<Cell>> ret = {};
-
     for (int i = 0; i < m; i++) {
         Array<Cell> line = {};
         for (int j = 0; j < n; j++)
@@ -626,7 +623,7 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
 {
     bool has_changed = false;
     Array<Value_t> line = {};
-    
+
     if (!cols_done[j]) {
         bool done = true;
         for (std::size_t i = 0; i < m; i++)
@@ -670,7 +667,6 @@ std::string Nonogram::SolverV2::solve()
             ss << '\n';
         }
         ss << '\n';
-
         return ss.str();
     }
     else

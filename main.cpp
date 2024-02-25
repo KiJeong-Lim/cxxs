@@ -2,6 +2,6 @@
 
 int main(void)
 {
-    test_io();
+    test_nonogramsolverv2();
     return 0;
 }
