@@ -170,7 +170,7 @@ void test_prompt(const char *const msg)
 
 void test_io()
 {
-    IO comm;
+    IO comm{ };
     bool prompt_finished = false;
 
     comm.setPrompt(test_prompt);
