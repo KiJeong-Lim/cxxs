@@ -35,7 +35,7 @@ std::string IntegerHelper::shows(const std::vector<int> &nums)
 SerialPrinter::SerialPrinter(SerialPrinter &&other)
     : msg_prefix{ other.msg_prefix }, mknewline{ other.mknewline }
 {
-  other.mknewline = false;
+    other.mknewline = false;
 }
 
 SerialPrinter::SerialPrinter(const char *const prefix)
