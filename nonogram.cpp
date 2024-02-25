@@ -70,14 +70,31 @@ public:
         const std::size_t n;
         std::vector<bool> rows_done;
         std::vector<bool> cols_done;
-        bool solved;
         Value_t *board;
     public:
         SolverV2(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
         ~SolverV2();
-        bool solve(void);
+        void solve(void);
         Value_t &at(int i, int j);
         const Value_t &at(int i, int j) const;
+    private:
+        bool checkRow(std::size_t i);
+        bool checkCol(std::size_t j);
+        static std::vector<Value_t> solveLine(const std::vector<Value_t> &line, const std::vector<int> &info);
+        class Generator {
+            Cell *line;
+            const std::size_t line_sz;
+            const std::vector<int> info;
+        public:
+            Generator(std::size_t line_sz, const std::vector<int> &info);
+            Generator(const Generator &other) = default;
+            ~Generator();
+            static mkGenerator(std::size_t line_sz, const std::vector<int> &info);
+            std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &line_ref);
+        private:
+            Generator() = delete;
+            bool run(Cell *start_point, std::size_t depth, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &result);
+        };
     };
 private:
     std::vector<std::vector<int>> rows;
@@ -96,6 +113,7 @@ public:
 template <typename ELEM> using Array = std::vector<ELEM>;
 
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t sz);
+static char showValue(Nonogram::SolverV2::Value_t v);
 static long long int generator1d_callback_call_count = 0;
 
 void test_nonogramsolver()
@@ -124,11 +142,200 @@ void test_nonogramsolverv2()
     }
 }
 
-bool Nonogram::SolverV2::solve()
+Nonogram::SolverV2::Generator::Generator(const std::size_t line_sz, const std::vector<int> &info)
+    : line{ nullptr }, line_sz{ line_sz }, info{ info }
 {
-    // to do
+    line = new Cell [line_sz];
+    for (std::size_t i = 0; i < line_sz; i++)
+        line[i] = WHITE;
+}
 
-    return solved;
+Nonogram::SolverV2::Generator::~Generator()
+{
+    delete line;
+    line = nullptr;
+}
+
+bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *start_point, const std::size_t depth, const std::size_t block_num, const std::vector<Nonogram::SolverV2::Value_t> &line_ref, std::vector<std::vector<Nonogram::Cell>> &result)
+{
+    if (depth == 0) {
+        bool compatible = true;
+
+        for (std::size_t i = 0; i < line_sz; i++) {
+            switch (line_ref[i]) {
+            case Unknown:
+                break;
+            case Sharp:
+                compatible &= (line[i] == BLACK);
+                break;
+            case Empty:
+                compatible &= (line[i] == WHITE);
+                break;
+            default:
+                compatible = false;
+                break;
+            }
+        }
+
+        if (compatible) {
+            result.push_back(std::vector<Cell>(line, line + line_sz));
+        }
+
+        return true;
+    }
+    else {
+        const std::size_t block_sz = info[block_num], next_depth = depth - 1;
+        Cell *left = start_point, *right = start_point;
+
+        if (info[block_num] == 0)
+            return run(line + block_sz, next_depth, 0, line_ref, result);
+            
+        if (left + block_sz > line + line_sz)
+            return false;
+
+        for (std::size_t b = 0; b < block_sz; b++)
+            *right++ = BLACK;
+
+        while (run(right + 1, next_depth, block_num + 1, line_ref, result)) {
+            if (right >= line + line_sz)
+                break;
+            *left++ = WHITE;
+            *right++ = BLACK;
+        }
+
+        while (right > left)
+            *--right = WHITE;
+
+        return true;
+    }
+}
+
+Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const std::vector<Nonogram::SolverV2::Value_t> &line_ref)
+{
+    Array<Array<Nonogram::Cell>> result = {};
+
+    run(line, info.size(), 0, line_ref, result);
+    
+    return result;
+}
+
+Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Nonogram::SolverV2::Value_t> &line, const Array<int> &info)
+{
+    Array<Value_t> new_line = {};
+    Generator generator{ .line_sz = line.size(), .info = info };
+    Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
+
+    for (std::size_t i = 0; i < line.size(); i++) {
+        if (line[i] == Unknown) {
+            Array<Cell> xs_i = {};
+            for (std::size_t k = 0; k < possiblities.size(); k++)
+                xs_i.push_back(possiblities[k][i]);
+            if (xs_i == std::vector<Cell>(xs_i.size(), BLACK)) {
+                new_line.push_back(Sharp);
+            }
+            else if (xs_i == std::vector<Cell>(xs_i.size(), WHITE)) {
+                new_line.push_back(Empty);
+            }
+            else {
+                new_line.push_back(Unknown);
+            }
+        }
+        else
+            new_line.push_back(line[i]);
+    }
+
+    return new_line;
+}
+
+bool Nonogram::SolverV2::checkRow(const std::size_t i)
+{
+    bool has_changed = false;
+    Array<Value_t> line = {};
+
+    if (!rows_done[i]) {
+        for (std::size_t j = 0; j < n; j++)
+            line.push_back(at(i, j));
+        const Array<Value_t> new_line = solveLine(line, rows[i]);
+        if (new_line != line) {
+            has_changed = true;
+            for (std::size_t j = 0; j < n; j++)
+                at(i, j) = new_line[j];
+            bool done = true;
+            for (std::size_t j = 0; j < n; j++)
+                done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+            rows_done[i] = done;
+        }
+    }
+
+    return has_changed;
+}
+
+bool Nonogram::SolverV2::checkCol(const std::size_t j)
+{
+    bool has_changed = false;
+    Array<Value_t> line = {};
+    
+    if (!cols_done[j]) {
+        for (std::size_t i = 0; i < m; i++)
+            line.push_back(at(i, j));
+        const Array<Value_t> new_line = solveLine(line, cols[j]);
+        if (new_line != line) {
+            has_changed = true;
+            for (std::size_t i = 0; i < m; i++)
+                at(i, j) = new_line[i];
+            bool done = true;
+            for (std::size_t i = 0; i < m; i++)
+                done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+            cols_done[j] = done;
+        }
+    }
+
+    return has_changed;
+}
+
+char showValue(const Nonogram::SolverV2::Value_t v)
+{
+    switch (v) {
+    case Nonogram::SolverV2::Unknown:
+        return '?';
+    case Nonogram::SolverV2::Sharp:
+        return '#';
+    case Nonogram::SolverV2::Empty:
+        return '.';
+    case Nonogram::SolverV2::Contradiction:
+        return 'x';
+    default:
+        return 'E';
+    }
+}
+
+void Nonogram::SolverV2::solve()
+{
+    bool changed = true, solved = true;
+
+    while (changed) {
+        changed = false;
+        for (std::size_t i = 0; i < m; i++)
+            changed |= checkRow(i);
+        for (std::size_t j = 0; j < n; j++)
+            changed |= checkCol(j);
+    }
+
+    for (std::size_t i = 0; i < m; i++)
+        for (std::size_t j = 0; j < n; j++)
+            solved &= (at(i, j) == Sharp || at(i, j) == Empty);
+            
+    if (solved) {
+        for (std::size_t i = 0; i < m; i++) {
+            for (std::size_t j = 0; j < n; j++) {
+                std::cout << showValue(at(i, j));
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    else
+        std::cout << "***Nonogram::SolverV2::solve(): cannot solve the puzzle\n";
 }
 
 void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::size_t line_sz)
@@ -172,8 +379,11 @@ void test_nonogramsolverlogic()
 }
 
 Nonogram::SolverV2::SolverV2(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols)
-    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_done{ }, cols_done{ }, solved{ false }, board{ nullptr }
+    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_done{ std::vector<bool>(m, false) }, cols_done{ std::vector<bool>(n, false) }, board{ nullptr }
 {
+    board = new Value_t [m * n];
+    for (int i = 0; i < m * n; i++)
+        board[i] = Unknown;
 }
 
 Nonogram::SolverV2::~SolverV2()
@@ -331,7 +541,7 @@ void Nonogram::Board::print() const
 
 Nonogram::Nonogram(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
     : rows{ rows }, cols{ cols }
-{    
+{
 }
 
 Nonogram Nonogram::scanPuzzle(const char *const file_name)
