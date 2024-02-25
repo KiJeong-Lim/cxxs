@@ -133,15 +133,15 @@ public:
         SolverV2() = delete;
         ~SolverV2();
         std::string solve(void);
-        Value_t &at(int i, int j)
-        {
-            return board[i * n + j];
-        }
-        const Value_t &at(int i, int j) const
-        {
-            return board[i * n + j];
-        }
     private:
+        Value_t &at(const int i, const int j)
+        {
+            return board[i * n + j];
+        }
+        const Value_t &at(const int i, const int j) const
+        {
+            return board[i * n + j];
+        }
         bool checkRow(std::size_t i);
         bool checkCol(std::size_t j);
         static std::vector<Value_t> solveLine(const std::vector<Value_t> &line, const std::vector<int> &info);

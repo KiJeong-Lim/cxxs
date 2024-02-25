@@ -6,7 +6,7 @@
 #define RIGHT_DIRECTION 77
 #define DELETE_KEY      127
 
-static void prompt(const char *msg);
+static void test_prompt(const char *msg);
 
 void IO::setPrompt(void (*const prompt)(const char *msg))
 {
@@ -163,7 +163,7 @@ void IO::print()
     std::cout.flush();
 }
 
-void prompt(const char *const msg)
+void test_prompt(const char *const msg)
 {
     std::cout << "\n[ECHO] " << msg << std::endl;
 }
@@ -173,7 +173,7 @@ void test_io()
     IO comm;
     bool prompt_finished = false;
 
-    comm.setPrompt(prompt);
+    comm.setPrompt(test_prompt);
 
     while(!prompt_finished) {
         prompt_finished = comm.runPrompt();
