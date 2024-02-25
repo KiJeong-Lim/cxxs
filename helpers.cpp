@@ -7,8 +7,8 @@ SerialPrinter serr = { .prefix = "WARNING> " };
 
 void test_serialprinter()
 {
-    sout << "hello" << " " << 1234 << " " << 3.14;
-    sout << "world" << " " << 5678 << " " << 2.718;
+    sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
+    sout << "world" << ' ' << 5678 << ' ' << 2.718281;
 }
 
 std::vector<int> IntegerHelper::reads(const std::string &str)
@@ -118,6 +118,13 @@ SerialPrinter SerialPrinter::operator<<(const std::stringstream &ss)
 {
     trick();
     std::cout << ss.str();
+    return SerialPrinter{ .prefix = nullptr, .lend = true };
+}
+
+SerialPrinter SerialPrinter::operator<<(const char c)
+{
+    trick();
+    std::cout << c;
     return SerialPrinter{ .prefix = nullptr, .lend = true };
 }
 

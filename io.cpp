@@ -8,6 +8,24 @@
 
 static void test_prompt(const char *msg);
 
+void test_io()
+{
+    IO comm{ };
+    bool prompt_finished = false;
+
+    comm.setPrompt(test_prompt);
+
+    while(!prompt_finished) {
+        prompt_finished = comm.runPrompt();
+        os.delay(10);
+    }
+}
+
+void test_prompt(const char *const msg)
+{
+    std::cout << "\n[ECHO] " << msg << std::endl;
+}
+
 void IO::setPrompt(void (*const prompt)(const char *msg))
 {
     this->prompt = prompt;
@@ -161,22 +179,4 @@ void IO::print()
     for (i = 0; i < cursor; i++)
         std::cout << buffer[i];
     std::cout.flush();
-}
-
-void test_prompt(const char *const msg)
-{
-    std::cout << "\n[ECHO] " << msg << std::endl;
-}
-
-void test_io()
-{
-    IO comm{ };
-    bool prompt_finished = false;
-
-    comm.setPrompt(test_prompt);
-
-    while(!prompt_finished) {
-        prompt_finished = comm.runPrompt();
-        os.delay(10);
-    }
 }

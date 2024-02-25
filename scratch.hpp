@@ -32,6 +32,7 @@ public:
     SerialPrinter operator<<(byte x);
     SerialPrinter operator<<(int n);
     SerialPrinter operator<<(const char *s);
+    SerialPrinter operator<<(char c);
     SerialPrinter operator<<(double v);
     SerialPrinter operator<<(const std::string &s);
     SerialPrinter operator<<(const std::stringstream &ss);

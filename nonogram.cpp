@@ -5,7 +5,7 @@
 template <typename ELEM> using Array = std::vector<ELEM>;
 
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t sz);
-static long long int generator1d_callback_call_count = 0;
+static unsigned long long int generator1d_callback_call_count = 0;
 
 void test_nonogramsolver()
 {
