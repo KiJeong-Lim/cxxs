@@ -111,7 +111,7 @@ bool IO::takech(const int ch)
         return false;
     case ESC:
         clear();
-        printf("\n");
+        std::cout << '\n';
         result = NULL;
         return true;
     case DIRECTION_KEY:
@@ -148,28 +148,25 @@ void IO::print()
 {
     int i = 0;
 
-    printf("\r");
-    for (i = 0; i < len(buffer); i++) {
-        printf(" ");    
-    }
-    printf("\r");
-    for (i = 0; i < cursor; i++) {
-        printf(" ");
-    }
-    for (i = cursor; i < theend; i++) {
-        printf("%c", buffer[i]);
-    }
+    std::cout << '\r';
+    for (i = 0; i < len(buffer); i++)
+        std::cout << ' ';
+    std::cout << '\r';
+    for (i = 0; i < cursor; i++)
+        std::cout << ' ';
+    for (i = cursor; i < theend; i++)
+        std::cout << static_cast<char>(buffer[i]);
     buffer[i] = '\0';
-    printf("\r");
-    for (int i = 0; i < cursor; i++) {
-        printf("%c", buffer[i]);
+    std::cout << '\r';
+    for (i = 0; i < cursor; i++) {
+        std::cout << static_cast<char>(buffer[i]);
     }
     std::cout.flush();
 }
 
 void prompt(const char *const msg)
 {
-    printf("\n[ECHO] %s\n", msg);
+    std::cout << "\n[ECHO] " << msg << std::endl;
 }
 
 void test_io()
