@@ -39,7 +39,7 @@ private:
     void trick();
 };
 
-class IO {
+class IO { // To do: cover the case that the buffer is overflowed.
     char buffer[64];
     int cursor;
     int theend;

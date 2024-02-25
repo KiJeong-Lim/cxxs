@@ -4,6 +4,7 @@
 #define DIRECTION_KEY   224
 #define LEFT_DIRECTION  75
 #define RIGHT_DIRECTION 77
+#define DELETE_KEY      127
 
 static void prompt(const char *msg);
 
@@ -147,7 +148,6 @@ void IO::sync(char *&msg)
 void IO::print()
 {
     int i = 0;
-
     std::cout << '\r';
     for (i = 0; i < len(buffer); i++)
         std::cout << ' ';
@@ -155,12 +155,11 @@ void IO::print()
     for (i = 0; i < cursor; i++)
         std::cout << ' ';
     for (i = cursor; i < theend; i++)
-        std::cout << static_cast<char>(buffer[i]);
+        std::cout << buffer[i];
     buffer[i] = '\0';
     std::cout << '\r';
-    for (i = 0; i < cursor; i++) {
-        std::cout << static_cast<char>(buffer[i]);
-    }
+    for (i = 0; i < cursor; i++)
+        std::cout << buffer[i];
     std::cout.flush();
 }
 
@@ -177,7 +176,7 @@ void test_io()
     comm.setPrompt(prompt);
 
     while(!prompt_finished) {
-        os.delay(10);
         prompt_finished = comm.runPrompt();
+        os.delay(10);
     }
 }
