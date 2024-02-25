@@ -18,7 +18,7 @@ extern "C" {
 class IntegerHelper {
 public:
     static std::vector<int> reads(const std::string &str);
-    static void shows(const std::vector<int> &nums);
+    static std::string shows(const std::vector<int> &nums);
 };
 
 class IO {

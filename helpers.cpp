@@ -17,10 +17,12 @@ std::vector<int> IntegerHelper::reads(const std::string &str)
     return xs;
 }
 
-void IntegerHelper::shows(const std::vector<int> &ns)
+std::string IntegerHelper::shows(const std::vector<int> &nums)
 {
-    const std::size_t l = ns.size();
+    const std::size_t l = nums.size();
+    std::stringstream ss{ };
     for (std::size_t i = 0; i < l; i++)
-        std::cout << ns[i] << ' ';
-    std::cout << '\n';
+        ss << nums[i] << ' ';
+    ss << '\n';
+    return ss.str();
 }
