@@ -96,9 +96,9 @@ SerialPrinter SerialPrinter::operator<<(const double v)
     return SerialPrinter{ .prefix = nullptr, .lend = true };
 }
 
-static char hex2char(const int hex)
+char hex2char(const int hex)
 {
-    switch (hex % 16) {
+    switch (hex) {
     case 0:
         return '0';
     case 1:
