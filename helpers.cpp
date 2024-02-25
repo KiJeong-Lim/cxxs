@@ -25,11 +25,15 @@ std::vector<int> IntegerHelper::reads(const std::string &str)
 std::string IntegerHelper::shows(const std::vector<int> &nums)
 {
     const std::size_t l = nums.size();
-    std::stringstream ss{ };
-    for (std::size_t i = 0; i < l; i++)
-        ss << nums[i] << ' ';
-    ss << '\n';
-    return ss.str();
+    if (l == 0)
+        return std::string{ "" };
+    else {    
+        std::stringstream ss{ };
+        ss << nums[0];
+        for (std::size_t i = 1; i < l; i++)
+            ss << ' ' << nums[i];
+        return ss.str();
+    }
 }
 
 SerialPrinter::SerialPrinter(SerialPrinter &&other)
