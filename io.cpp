@@ -179,7 +179,7 @@ void test_io()
     comm.setPrompt(prompt);
 
     while(!prompt_finished) {
-        os.sleep(10);
+        os.delay(10);
         prompt_finished = comm.runPrompt();
     }
 }

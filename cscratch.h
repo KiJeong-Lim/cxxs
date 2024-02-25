@@ -9,7 +9,7 @@
 #define len(xs)     (sizeof(xs)/sizeof((xs)[0]))
 
 struct OS_C_API {
-    void (*sleep)(long unsigned int sleeping_time);
+    void (*delay)(unsigned long int sleeping_time);
     int (*kbhit)(void);
     int (*getch)(void);
     long long int (*itime)(void);
