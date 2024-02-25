@@ -499,7 +499,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
     }
 }
 
-Nonogram::SolverV2::Generator::Generator(const std::size_t line_sz, const std::vector<int> &info)
+Nonogram::SolverV2::Generator::Generator(const std::size_t line_sz, const Array<int> &info)
     : line{ nullptr }, line_sz{ line_sz }, info{ info }
 {
     line = new Cell [line_sz];
@@ -513,7 +513,7 @@ Nonogram::SolverV2::Generator::~Generator()
     line = nullptr;
 }
 
-bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *start_point, const std::size_t depth, const std::size_t block_num, const std::vector<Nonogram::SolverV2::Value_t> &line_ref, std::vector<std::vector<Nonogram::Cell>> &result)
+bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *start_point, const std::size_t depth, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &result)
 {
     if (depth == info.size()) {
         bool compatible = true;
@@ -564,7 +564,7 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *start_point, const std::
     }
 }
 
-Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const std::vector<Nonogram::SolverV2::Value_t> &line_ref)
+Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const Array<Nonogram::SolverV2::Value_t> &line_ref)
 {
     Array<Array<Cell>> result = {};
 
