@@ -5,6 +5,12 @@ static char hex2char(unsigned int hex);
 SerialPrinter sout = { .prefix = "arduino> " };
 SerialPrinter serr = { .prefix = "WARNING> " };
 
+void test_serialprinter()
+{
+    sout << "hello" << " " << 1234 << " " << 3.14;
+    sout << "world" << " " << 5678 << " " << 2.718;
+}
+
 std::vector<int> IntegerHelper::reads(const std::string &str)
 {
     std::stringstream ss = static_cast<std::stringstream &&>(std::stringstream{ } << str);
@@ -54,7 +60,8 @@ SerialPrinter::SerialPrinter(const char *const prefix, const bool lend)
 
 SerialPrinter::~SerialPrinter()
 {
-    std::cout << '\n';
+    if (mknewline)
+        std::cout << '\n';
     os.delay(5);
 }
 
@@ -97,6 +104,20 @@ SerialPrinter SerialPrinter::operator<<(const double v)
 {
     trick();
     std::cout << v;
+    return SerialPrinter{ .prefix = nullptr, .lend = true };
+}
+
+SerialPrinter SerialPrinter::operator<<(const std::string &s)
+{
+    trick();
+    std::cout << s;
+    return SerialPrinter{ .prefix = nullptr, .lend = true };
+}
+
+SerialPrinter SerialPrinter::operator<<(const std::stringstream &ss)
+{
+    trick();
+    std::cout << ss.str();
     return SerialPrinter{ .prefix = nullptr, .lend = true };
 }
 

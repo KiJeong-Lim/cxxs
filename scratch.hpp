@@ -33,6 +33,8 @@ public:
     SerialPrinter operator<<(int n);
     SerialPrinter operator<<(const char *s);
     SerialPrinter operator<<(double v);
+    SerialPrinter operator<<(const std::string &s);
+    SerialPrinter operator<<(const std::stringstream &ss);
 private:
     void trick();
 };
@@ -128,10 +130,17 @@ public:
         Value_t *board;
     public:
         SolverV2(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
+        SolverV2() = delete;
         ~SolverV2();
         std::string solve(void);
-        Value_t &at(int i, int j);
-        const Value_t &at(int i, int j) const;
+        Value_t &at(int i, int j)
+        {
+            return board[i * n + j];
+        }
+        const Value_t &at(int i, int j) const
+        {
+            return board[i * n + j];
+        }
     private:
         bool checkRow(std::size_t i);
         bool checkCol(std::size_t j);
@@ -144,7 +153,6 @@ public:
             Generator(std::size_t line_sz, const std::vector<int> &info);
             Generator(const Generator &other) = default;
             ~Generator();
-            static mkGenerator(std::size_t line_sz, const std::vector<int> &info);
             std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &line_ref);
         private:
             Generator() = delete;
@@ -172,5 +180,6 @@ void test_io(void);
 void test_nonogramsolver(void);
 void test_nonogramsolverv2(void);
 void test_nonogramsolverlogic(void);
+void test_serialprinter(void);
 
 #endif

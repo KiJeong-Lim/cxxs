@@ -303,7 +303,7 @@ bool Nonogram::isWellFormed() const
 Nonogram::Solver Nonogram::mkSolver() const
 {
     if (isWellFormed())
-        return Solver{ rows, cols };
+        return Solver{ .rows = rows, .cols = cols };
     else
         throw Exception("***Nonogram::mkSolver(): puzzle not well formed\n");
 }
@@ -322,7 +322,7 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
                 cols[j] = std::vector<int>{ };
         }
 
-        return SolverV2{ rows, cols };
+        return SolverV2{ .rows = rows, .cols = cols };
     }
     else
         throw Exception("***Nonogram::mkSolverV2(): puzzle not well formed\n");
@@ -566,7 +566,7 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *start_point, const std::
 
 Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const std::vector<Nonogram::SolverV2::Value_t> &line_ref)
 {
-    Array<Array<Nonogram::Cell>> result = {};
+    Array<Array<Cell>> result = {};
 
     run(line, 0, 0, line_ref, result);
     
@@ -607,18 +607,18 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
     Array<Value_t> line = {};
 
     if (!rows_done[i]) {
+        bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        const Array<Value_t> new_line = solveLine(line, rows[i]);
+        Array<Value_t> &&new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t j = 0; j < n; j++)
                 at(i, j) = new_line[j];
-            bool done = true;
-            for (std::size_t j = 0; j < n; j++)
-                done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
-            rows_done[i] = done;
         }
+        for (std::size_t j = 0; j < n; j++)
+            done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+        rows_done[i] = done;
     }
 
     return has_changed;
@@ -630,18 +630,18 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
     Array<Value_t> line = {};
     
     if (!cols_done[j]) {
+        bool done = true;
         for (std::size_t i = 0; i < m; i++)
             line.push_back(at(i, j));
-        const Array<Value_t> new_line = solveLine(line, cols[j]);
+        Array<Value_t> &&new_line = solveLine(line, cols[j]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t i = 0; i < m; i++)
                 at(i, j) = new_line[i];
-            bool done = true;
-            for (std::size_t i = 0; i < m; i++)
-                done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
-            cols_done[j] = done;
         }
+        for (std::size_t i = 0; i < m; i++)
+            done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+        cols_done[j] = done;
     }
 
     return has_changed;
@@ -660,9 +660,10 @@ std::string Nonogram::SolverV2::solve()
     }
 
     for (std::size_t i = 0; i < m; i++)
-        for (std::size_t j = 0; j < n; j++)
-            solved &= (at(i, j) == Sharp || at(i, j) == Empty);
-            
+        solved &= rows_done[i];
+    for (std::size_t j = 0; j < n; j++)
+        solved &= cols_done[j];
+
     if (solved) {
         std::stringstream ss{ };
         for (std::size_t i = 0; i < m; i++) {
@@ -671,13 +672,14 @@ std::string Nonogram::SolverV2::solve()
             ss << '\n';
         }
         ss << '\n';
+
         return ss.str();
     }
     else
         return std::string{ "***Nonogram::SolverV2::solve(): cannot solve the puzzle\n" };
 }
 
-Nonogram::SolverV2::SolverV2(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols)
+Nonogram::SolverV2::SolverV2(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
     : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_done{ std::vector<bool>(m, false) }, cols_done{ std::vector<bool>(n, false) }, board{ nullptr }
 {
     board = new Value_t [m * n];
@@ -689,14 +691,4 @@ Nonogram::SolverV2::~SolverV2()
 {
     delete board;
     board = nullptr;
-}
-
-Nonogram::SolverV2::Value_t &Nonogram::SolverV2::at(const int i, const int j)
-{
-    return board[i * n + j];
-}
-
-const Nonogram::SolverV2::Value_t &Nonogram::SolverV2::at(const int i, const int j) const
-{
-    return board[i * n + j];
 }
