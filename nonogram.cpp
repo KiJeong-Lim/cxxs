@@ -7,6 +7,33 @@ template <typename ELEM> using Array = std::vector<ELEM>;
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t sz);
 static long long int generator1d_callback_call_count = 0;
 
+void test_nonogramsolver()
+{
+    try {
+        auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
+        auto solver = puzzle.mkSolver();
+        auto solutions = solver.solve();
+        for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
+            sol->print();
+    }
+    catch (const std::exception &e) {
+        std::cerr << e.what();
+    }
+}
+
+void test_nonogramsolverv2()
+{
+    try {
+        auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
+        auto solver = puzzle.mkSolverV2();
+        auto solution = solver.solve();
+        std::cout << solution;
+    }
+    catch (const std::exception &e) {
+        std::cerr << e.what();
+    }
+}
+
 void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::size_t line_sz)
 {
     std::cout << "================\n";
@@ -45,33 +72,6 @@ void test_nonogramsolverlogic()
     }
     else
         std::cout << "***test_nonogramsolverlogic(): ill-formed\n";
-}
-
-void test_nonogramsolver()
-{
-    try {
-        Nonogram puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
-        Nonogram::Solver solver = puzzle.mkSolver();
-        Array<Nonogram::Board> solutions = solver.solve();
-        for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
-            sol->print();
-    }
-    catch (const std::exception &e) {
-        std::cerr << e.what();
-    }
-}
-
-void test_nonogramsolverv2()
-{
-    try {
-        Nonogram puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
-        Nonogram::SolverV2 solver = puzzle.mkSolverV2();
-        std::string solution = solver.solve();
-        std::cout << solution;
-    }
-    catch (const std::exception &e) {
-        std::cerr << e.what();
-    }
 }
 
 Nonogram::Generator1D::Generator1D()

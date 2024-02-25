@@ -11,10 +11,6 @@
 
 #include "cscratch.h"
 
-extern "C" {
-    extern const struct OS_C_API os;
-};
-
 class IntegerHelper {
 public:
     static std::vector<int> reads(const std::string &str);
@@ -169,6 +165,7 @@ public:
     static Nonogram scanPuzzle(const char *file_name);
 };
 
+extern "C" const struct OS_C_API os;
 extern SerialPrinter sout, serr;
 
 void test_io(void);

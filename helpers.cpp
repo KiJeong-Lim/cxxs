@@ -44,7 +44,7 @@ SerialPrinter::SerialPrinter(const char *const prefix)
 }
 
 SerialPrinter::SerialPrinter(const char *const prefix, const bool lend)
-  : msg_prefix{ prefix }, mknewline{ lend }
+    : msg_prefix{ prefix }, mknewline{ lend }
 {
 }
 
