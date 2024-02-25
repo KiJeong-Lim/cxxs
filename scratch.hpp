@@ -21,6 +21,26 @@ public:
     static std::string shows(const std::vector<int> &nums);
 };
 
+class SerialPrinter {
+    typedef unsigned char byte;
+    char const *const msg_prefix;
+    bool mknewline;
+public:
+    SerialPrinter() = delete;
+    SerialPrinter(const SerialPrinter &other) = delete;
+    ~SerialPrinter();
+    SerialPrinter(SerialPrinter &&other);
+    SerialPrinter(const char *prefix);
+    SerialPrinter(const char *prefix, bool lend);
+    SerialPrinter operator<<(bool b);
+    SerialPrinter operator<<(byte x);
+    SerialPrinter operator<<(int n);
+    SerialPrinter operator<<(const char *s);
+    SerialPrinter operator<<(double v);
+private:
+    void trick();
+};
+
 class IO {
     char buffer[64];
     int cursor;
@@ -148,6 +168,8 @@ public:
     SolverV2 mkSolverV2(void) const;
     static Nonogram scanPuzzle(const char *file_name);
 };
+
+extern SerialPrinter sout, serr;
 
 void test_io(void);
 void test_nonogramsolver(void);
