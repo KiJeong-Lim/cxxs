@@ -101,7 +101,7 @@ public:
     };
     class SolverV2 {
     public:
-        typedef enum Value : int { Error = -1, Unknown = 0, Sharp = 1, Empty = 2, Contradiction = 3 } Value_t;
+        typedef enum Value : int { Error = 'E', Unknown = '?', Sharp = '#', Empty = '.', Contradiction = 'x' } Value_t;
     private:
         const std::vector<std::vector<int>> rows;
         const std::vector<std::vector<int>> cols;
@@ -113,7 +113,7 @@ public:
     public:
         SolverV2(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
         ~SolverV2();
-        void solve(void);
+        std::string solve(void);
         Value_t &at(int i, int j);
         const Value_t &at(int i, int j) const;
     private:
