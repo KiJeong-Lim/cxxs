@@ -7,6 +7,7 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include "cscratch.h"
@@ -157,7 +158,7 @@ public:
             std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &reference);
         private:
             Generator() = delete;
-            bool run(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &accum);
+            bool accumulatePossiblities(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &accum);
         };
     };
 private:
@@ -172,6 +173,35 @@ public:
     Solver mkSolver(void) const;
     SolverV2 mkSolverV2(void) const;
     static Nonogram scanPuzzle(const char *file_name);
+};
+
+class Foo {
+public:
+    Foo()
+    {
+        std::cout << "Foo::Foo()\n";
+    }
+    ~Foo()
+    {
+        std::cout << "Foo::~Foo()\n";
+    }
+    Foo(const Foo &other)
+    {
+        std::cout << "Foo::Foo(const Foo &other)\n";
+    }
+    Foo(Foo &&other)
+    {
+        std::cout << "Foo::Foo(Foo &&other)\n";
+    }
+    Foo &operator=(Foo &&rhs)
+    {
+        std::cout << "Foo &Foo::operator=(Foo &&rhs)\n";
+        return *this;
+    }
+    static Foo mkFoo(void)
+    {
+        return Foo{ };
+    }
 };
 
 extern "C" const struct OS_C_API os;

@@ -2,6 +2,6 @@
 
 int main(void)
 {
-    test_serialprinter();
+    test_nonogramsolverv2();
     return 0;
 }

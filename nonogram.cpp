@@ -429,7 +429,7 @@ Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
         Array<Cell> line = {};
         for (int j = 0; j < n; j++)
             line.push_back(at(i, j));
-        ret.push_back(static_cast<Array<Cell> &&>(line));
+        ret.push_back(std::move(line));
     }
     return ret;
 }
@@ -510,7 +510,7 @@ Nonogram::SolverV2::Generator::~Generator()
     line = nullptr;
 }
 
-bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &accum)
+bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &accum)
 {
     if (block_num == info.size()) {
         bool is_compatible = true;
@@ -546,7 +546,7 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
 
-        while (run(right + 1, block_num + 1, line_ref, accum)) {
+        while (accumulatePossiblities(right + 1, block_num + 1, line_ref, accum)) {
             if (right >= line + line_sz)
                 break;
             *left++ = WHITE;
@@ -562,16 +562,16 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
 
 Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const Array<Nonogram::SolverV2::Value_t> &reference)
 {
-    Array<Array<Cell>> result = {};
-    run(line, 0, reference, result);
-    return result;
+    Array<Array<Cell>> possiblities = {};
+    accumulatePossiblities(line, 0, reference, possiblities);
+    return possiblities;
 }
 
 Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Nonogram::SolverV2::Value_t> &line, const Array<int> &info)
 {
     Array<Value_t> new_line = {};
     Generator generator{ .line_sz = line.size(), .info = info };
-    const Array<Array<Cell>> &possiblities = generator.findAllPossiblitiesCompatibleWith(line);
+    const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
 
     for (std::size_t i = 0; i < line.size(); i++) {
         if (line[i] == Unknown) {
@@ -601,7 +601,7 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
         bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        const Array<Value_t> &new_line = solveLine(line, rows[i]);
+        Array<Value_t> new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t j = 0; j < n; j++)
@@ -624,7 +624,7 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
         bool done = true;
         for (std::size_t i = 0; i < m; i++)
             line.push_back(at(i, j));
-        const Array<Value_t> &new_line = solveLine(line, cols[j]);
+        Array<Value_t> new_line = solveLine(line, cols[j]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t i = 0; i < m; i++)
