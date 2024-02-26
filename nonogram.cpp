@@ -60,7 +60,7 @@ void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::siz
 
 void test_nonogramsolverlogic()
 {
-    int info[] = { 2, 2, 3, 1, };
+    int info[] = { 2, 1, 3, 2, };
     Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
     Nonogram::Generator1D gen = {};
     bool well_formed = gen.init(line, len(line), info, len(info));
@@ -153,10 +153,12 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
             *right++ = BLACK;
 
         while (run(right + 1, depth - 1, block_num + 1)) {
-            if (right >= line + line_sz)
+            if (left + block_sz >= line + line_sz)
                 break;
-            *left++ = WHITE;
-            *right++ = BLACK;
+            else {
+                *left++ = WHITE;
+                *right++ = BLACK;
+            }
         }
 
         while (right > left)
@@ -493,7 +495,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
 }
 
 Nonogram::SolverV2::Generator::Generator(const std::size_t line_sz, const Array<int> &info)
-    : line{ nullptr }, line_sz{ line_sz }, info{ info }
+    : line{ nullptr }, line_sz{ line_sz }, info{ info }, info_sz{ info.size() }
 {
     line = new Cell [line_sz];
     for (std::size_t i = 0; i < line_sz; i++)
@@ -508,7 +510,7 @@ Nonogram::SolverV2::Generator::~Generator()
 
 bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &accum)
 {
-    if (block_num == info.size()) {
+    if (block_num == info_sz) {
         bool is_compatible = true;
 
         for (std::size_t i = 0; i < line_sz; i++) {
@@ -538,21 +540,29 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
 
         if (start_point + block_sz > line + line_sz)
             return false;
+        else {
+            int rest_line_len = block_sz;
 
-        for (int b = 0; b < block_sz; b++)
-            *right++ = BLACK;
+            for (std::size_t i = block_num + 1; i < info_sz; i++)
+                rest_line_len += info[i] + 1;
 
-        while (accumulatePossiblities(right + 1, block_num + 1, line_ref, accum)) {
-            if (right >= line + line_sz)
-                break;
-            *left++ = WHITE;
-            *right++ = BLACK;
+            for (int b = 0; b < block_sz; b++)
+                *right++ = BLACK;
+
+            while (accumulatePossiblities(right + 1, block_num + 1, line_ref, accum)) {
+                if (left + rest_line_len >= line + line_sz)
+                    break;
+                else {
+                    *left++ = WHITE;
+                    *right++ = BLACK;
+                }
+            }
+    
+            while (right > left)
+                *--right = WHITE;
+    
+            return true;
         }
-
-        while (right > left)
-            *--right = WHITE;
-
-        return true;
     }
 }
 
@@ -568,21 +578,25 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
     Generator generator{ .line_sz = line.size(), .info = info };
     const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
     Array<Value_t> new_line = {};
+    Array<Cell> xs = {};
 
     for (std::size_t i = 0; i < line.size(); i++) {
-        if (line[i] == Unknown) {
-            Array<Cell> xs_i = {};
+        switch (line[i]) {
+        case Unknown:
+            xs.clear();
             for (std::size_t k = 0; k < possiblities.size(); k++)
-                xs_i.push_back(possiblities[k][i]);
-            if (xs_i == Array<Cell>(xs_i.size(), BLACK))
+                xs.push_back(possiblities[k][i]);
+            if (xs == Array<Cell>(xs.size(), BLACK)) {
                 new_line.push_back(Sharp);
-            else if (xs_i == Array<Cell>(xs_i.size(), WHITE))
+                break;
+            }
+            if (xs == Array<Cell>(xs.size(), WHITE)) {
                 new_line.push_back(Empty);
-            else
-                new_line.push_back(Unknown);
-        }
-        else
+                break;
+            }
+        default:
             new_line.push_back(line[i]);
+        }
     }
 
     return new_line;

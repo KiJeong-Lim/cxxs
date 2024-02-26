@@ -127,10 +127,11 @@ public:
         class Generator {
             Cell *line;
             const std::size_t line_sz;
-            const std::vector<int> info;
+            const std::vector<int> &info;
+            const std::size_t info_sz;
         public:
             Generator(std::size_t line_sz, const std::vector<int> &info);
-            Generator(const Generator &other) = default;
+            Generator(const Generator &other) = delete;
             ~Generator();
             std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &reference);
         private:
