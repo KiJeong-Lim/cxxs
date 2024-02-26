@@ -1,2 +1,3 @@
 # cxxs
- Dev-C++
+
+Dev-C++ `-std=c++17 -O3`
