@@ -379,7 +379,7 @@ void Nonogram::Solver::print() const
 
 void Nonogram::Solver::clear()
 {
-    delete board;
+    delete[] board;
     board = nullptr;
 }
 
@@ -506,7 +506,7 @@ Nonogram::SolverV2::Generator::Generator(const std::size_t line_sz, const Array<
 
 Nonogram::SolverV2::Generator::~Generator()
 {
-    delete line;
+    delete[] line;
     line = nullptr;
 }
 
@@ -680,6 +680,6 @@ Nonogram::SolverV2::SolverV2(const Array<Array<int>> &rows, const Array<Array<in
 
 Nonogram::SolverV2::~SolverV2()
 {
-    delete board;
+    delete[] board;
     board = nullptr;
 }
