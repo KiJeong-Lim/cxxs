@@ -18,29 +18,6 @@ public:
     static std::string shows(const std::vector<int> &nums);
 };
 
-class SerialPrinter {
-    typedef unsigned char byte;
-    char const *const msg_prefix;
-    bool mknewline;
-public:
-    SerialPrinter() = delete;
-    SerialPrinter(const SerialPrinter &other) = delete;
-    ~SerialPrinter();
-    SerialPrinter(SerialPrinter &&other);
-    SerialPrinter(const char *prefix);
-    SerialPrinter(const char *prefix, bool lend);
-    SerialPrinter operator<<(bool b);
-    SerialPrinter operator<<(byte x);
-    SerialPrinter operator<<(int n);
-    SerialPrinter operator<<(const char *s);
-    SerialPrinter operator<<(char c);
-    SerialPrinter operator<<(double v);
-    SerialPrinter operator<<(const std::string &s);
-    SerialPrinter operator<<(const std::stringstream &ss);
-private:
-    void trick();
-};
-
 class IO { // To do: cover the case that the buffer is overflowed.
     char buffer[64];
     int cursor;
@@ -173,6 +150,29 @@ public:
     Solver mkSolver(void) const;
     SolverV2 mkSolverV2(void) const;
     static Nonogram scanPuzzle(const char *file_name);
+};
+
+class SerialPrinter {
+    typedef unsigned char byte;
+    char const *const msg_prefix;
+    bool mknewline;
+public:
+    SerialPrinter() = delete;
+    SerialPrinter(const SerialPrinter &other) = delete;
+    ~SerialPrinter();
+    SerialPrinter(SerialPrinter &&other);
+    SerialPrinter(const char *prefix);
+    SerialPrinter(const char *prefix, bool lend);
+    SerialPrinter operator<<(bool b);
+    SerialPrinter operator<<(byte x);
+    SerialPrinter operator<<(int n);
+    SerialPrinter operator<<(const char *s);
+    SerialPrinter operator<<(char c);
+    SerialPrinter operator<<(double v);
+    SerialPrinter operator<<(const std::string &s);
+    SerialPrinter operator<<(const std::stringstream &ss);
+private:
+    void trick();
 };
 
 class Foo {

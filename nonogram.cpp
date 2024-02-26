@@ -61,10 +61,10 @@ void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::siz
 void test_nonogramsolverlogic()
 {
     int info[] = { 2, 2, 3, 1, };
-    Nonogram::Cell line[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
     Nonogram::Generator1D gen = {};
     bool well_formed = gen.init(line, len(line), info, len(info));
-    
+
     if (well_formed) {
         gen.attach(debug_Generator1D_callback);
         gen.exec();
