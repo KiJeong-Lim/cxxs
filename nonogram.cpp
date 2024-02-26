@@ -214,9 +214,9 @@ Nonogram::Nonogram(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
 
 Nonogram Nonogram::scanPuzzle(const char *const file_name)
 {
-    Array<Array<int>> rows, cols;
-    std::ifstream file;
-    std::string line;
+    Array<Array<int>> rows = {}, cols = {};
+    std::ifstream file{ };
+    std::string line{ };
 
     try {
         file.open(file_name, std::ios::in);
@@ -301,7 +301,7 @@ Nonogram::Solver Nonogram::mkSolver() const
     if (isWellFormed())
         return Solver{ .rows = rows, .cols = cols };
     else
-        throw Exception("***Nonogram::mkSolver(): puzzle not well formed\n");
+        throw Exception("***Nonogram::mkSolver(): puzzle ill-formed\n");
 }
 
 Nonogram::SolverV2 Nonogram::mkSolverV2() const
@@ -310,16 +310,16 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
         Array<Array<int>> rows = this->rows, cols = this->cols;
         for (std::size_t i = 0; i < rows.size(); i++) {
             if (rows[i].size() == 1 && rows[i][0] == 0)
-                rows[i] = std::vector<int>{ };
+                rows[i] = Array<int>{ };
         }
         for (std::size_t j = 0; j < cols.size(); j++) {
             if (cols[j].size() == 1 && cols[j][0] == 0)
-                cols[j] = std::vector<int>{ };
+                cols[j] = Array<int>{ };
         }
         return SolverV2{ .rows = rows, .cols = cols };
     }
     else
-        throw Exception("***Nonogram::mkSolverV2(): puzzle not well formed\n");
+        throw Exception("***Nonogram::mkSolverV2(): puzzle ill-formed\n");
 }
 
 Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
@@ -528,7 +528,7 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
         }
 
         if (is_compatible)
-            accum.push_back(std::vector<Cell>(line, line + line_sz));
+            accum.push_back(Array<Cell>(line, line + line_sz));
 
         return true;
     }
@@ -574,9 +574,9 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
             Array<Cell> xs_i = {};
             for (std::size_t k = 0; k < possiblities.size(); k++)
                 xs_i.push_back(possiblities[k][i]);
-            if (xs_i == std::vector<Cell>(xs_i.size(), BLACK))
+            if (xs_i == Array<Cell>(xs_i.size(), BLACK))
                 new_line.push_back(Sharp);
-            else if (xs_i == std::vector<Cell>(xs_i.size(), WHITE))
+            else if (xs_i == Array<Cell>(xs_i.size(), WHITE))
                 new_line.push_back(Empty);
             else
                 new_line.push_back(Unknown);
@@ -599,9 +599,9 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
             line.push_back(at(i, j));
         const Array<Value_t> new_line = solveLine(line, rows[i]);
         if (new_line != line) {
-            has_changed = true;
             for (std::size_t j = 0; j < n; j++)
                 at(i, j) = new_line[j];
+            has_changed = true;
         }
         for (std::size_t j = 0; j < n; j++)
             done &= (at(i, j) == Sharp || at(i, j) == Empty);
@@ -622,12 +622,12 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
             line.push_back(at(i, j));
         const Array<Value_t> new_line = solveLine(line, cols[j]);
         if (new_line != line) {
-            has_changed = true;
             for (std::size_t i = 0; i < m; i++)
                 at(i, j) = new_line[i];
+            has_changed = true;
         }
         for (std::size_t i = 0; i < m; i++)
-            done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+            done &= (at(i, j) == Sharp || at(i, j) == Empty);
         cols_done[j] = done;
     }
 
@@ -666,7 +666,7 @@ std::string Nonogram::SolverV2::solve()
 }
 
 Nonogram::SolverV2::SolverV2(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
-    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_done{ std::vector<bool>(m, false) }, cols_done{ std::vector<bool>(n, false) }, board{ nullptr }
+    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, rows_done{ Array<bool>(m, false) }, cols_done{ Array<bool>(n, false) }, board{ nullptr }
 {
     board = new Value_t [m * n];
     for (std::size_t i = 0; i < m * n; i++)
