@@ -4,7 +4,7 @@
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 
-static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t sz);
+static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t line_sz);
 static unsigned long long int generator1d_callback_call_count = 0;
 
 void test::nonogramsolver()
@@ -39,15 +39,11 @@ void test::nonogramsolverlogic()
     int info[] = { 2, 1, 3, 2, };
     Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
     Nonogram::Generator1D gen = {};
-    bool well_formed = gen.init(line, len(line), info, len(info));
 
-    if (well_formed) {
-        gen.attach(debug_Generator1D_callback);
-        gen.exec();
-        std::cout << "count = " << generator1d_callback_call_count << std::endl;
-    }
-    else
-        std::cout << "***test_nonogramsolverlogic(): ill-formed\n";
+    gen.init(line, len(line), info, len(info));
+    gen.attach(debug_Generator1D_callback);
+    gen.exec();
+    std::cout << "count = " << generator1d_callback_call_count << std::endl;
 }
 
 void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::size_t line_sz)
@@ -99,7 +95,7 @@ bool Nonogram::Generator1D::attach(void (*const callback)(const Nonogram::Cell *
 
 void Nonogram::Generator1D::print() const
 {
-    for (int i = 0; i < line_sz; i++) {
+    for (int i = 0; int2size_t(i) < line_sz; i++) {
         switch (line[i]) {
         case BLACK:
             std::cout << '#';
@@ -275,7 +271,7 @@ bool Nonogram::isWellFormed() const
                     else
                         t += rows[i][k] + 1;
                 }
-            if (t > m)
+            if (int2size_t(t) > m)
                 return false;
         }
     for (std::size_t j = 0; j < n; j++)
@@ -292,7 +288,7 @@ bool Nonogram::isWellFormed() const
                     else
                         t += cols[j][k] + 1;
                 }
-            if (t > n)
+            if (int2size_t(t) > n)
                 return false;
         }
     return true;
@@ -311,11 +307,11 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
     if (isWellFormed()) {
         Array<Array<int>> rows = this->rows, cols = this->cols;
         for (std::size_t i = 0; i < rows.size(); i++) {
-            if (rows[i].size() == 1 && rows[i][0] == 0)
+            if (rows[i][0] == 0)
                 rows[i] = Array<int>{ };
         }
         for (std::size_t j = 0; j < cols.size(); j++) {
-            if (cols[j].size() == 1 && cols[j][0] == 0)
+            if (cols[j][0] == 0)
                 cols[j] = Array<int>{ };
         }
         return SolverV2{ .rows = rows, .cols = cols };
@@ -412,7 +408,7 @@ bool Nonogram::Solver::isAnswer()
                 return false;
         }
         else {
-            if (k != cols[j].size())
+            if (int2size_t(k) != cols[j].size())
                 return false;
         } 
     }
@@ -461,7 +457,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
         if (left + block_sz > &board[(i + 1) * n])
             return 0;
 
-        if (block_num + 1 == rows[i].size()) {
+        if (int2size_t(block_num + 1) == rows[i].size()) {
             next_i = i + 1;
             next_floor = &board[(i + 1) * n];
             next_block_num = 0;
@@ -512,9 +508,10 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
 {
     if (block_num == info_sz) {
         bool is_compatible = true;
-
         for (std::size_t i = 0; i < line_sz; i++) {
             switch (line_ref[i]) {
+            case Unknown:
+                break;
             case Sharp:
                 is_compatible &= (line[i] == BLACK);
                 break;
@@ -523,45 +520,35 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
                 break;
             default:
                 is_compatible = false;
-            case Unknown:
-                break;
             }
             if (!is_compatible)
                 break;
         }
-
         if (is_compatible)
             accum.push_back(Array<Cell>(line, line + line_sz));
-
         return true;
     }
     else {
         const int block_sz = info[block_num];
         Cell *left = start_point, *right = start_point;
-
         if (start_point + block_sz > line + line_sz)
             return false;
         else {
             int rest_line_len = block_sz;
-
             for (std::size_t i = block_num + 1; i < info_sz; i++)
                 rest_line_len += info[i] + 1;
-
             for (int b = 0; b < block_sz; b++)
                 *right++ = BLACK;
-
             while (accumulatePossiblities(right + 1, block_num + 1, line_ref, accum)) {
-                if (left + rest_line_len >= line + line_sz)
-                    break;
-                else {
+                if (left + rest_line_len < line + line_sz) {
                     *left++ = WHITE;
                     *right++ = BLACK;
                 }
+                else
+                    break;
             }
-    
             while (right > left)
                 *--right = WHITE;
-    
             return true;
         }
     }
