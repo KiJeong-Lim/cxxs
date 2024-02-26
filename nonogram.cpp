@@ -515,8 +515,6 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
 
         for (std::size_t i = 0; i < line_sz; i++) {
             switch (line_ref[i]) {
-            case Unknown:
-                break;
             case Sharp:
                 is_compatible &= (line[i] == BLACK);
                 break;
@@ -525,8 +523,11 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
                 break;
             default:
                 is_compatible = false;
+            case Unknown:
                 break;
             }
+            if (!is_compatible)
+                break;
         }
 
         if (is_compatible)
@@ -605,13 +606,13 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
 bool Nonogram::SolverV2::checkRow(const std::size_t i)
 {
     bool has_changed = false;
-    Array<Value_t> line = {};
+    Array<Value_t> line = {}, new_line = {};
 
     if (!rows_done[i]) {
         bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        const Array<Value_t> new_line = solveLine(line, rows[i]);
+        new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             for (std::size_t j = 0; j < n; j++)
                 at(i, j) = new_line[j];
@@ -628,13 +629,13 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
 bool Nonogram::SolverV2::checkCol(const std::size_t j)
 {
     bool has_changed = false;
-    Array<Value_t> line = {};
+    Array<Value_t> line = {}, new_line = {};
 
     if (!cols_done[j]) {
         bool done = true;
         for (std::size_t i = 0; i < m; i++)
             line.push_back(at(i, j));
-        const Array<Value_t> new_line = solveLine(line, cols[j]);
+        new_line = solveLine(line, cols[j]);
         if (new_line != line) {
             for (std::size_t i = 0; i < m; i++)
                 at(i, j) = new_line[i];
