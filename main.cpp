@@ -11,5 +11,6 @@ int main(void)
 
 void press_any_key()
 {
-    std::cin.get();
+    std::cout << "Press any key...\n";
+    os.getch();
 }
