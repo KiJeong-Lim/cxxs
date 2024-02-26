@@ -81,16 +81,13 @@ Nonogram::Generator1D::Generator1D()
 
 void Nonogram::Generator1D::exec()
 {
-    int block_cnt = 0;
-    bool last_was_black = false;
-
-    for (int i = 0; i < line_sz; i++)
+    for (std::size_t i = 0; i < line_sz; i++)
         line[i] = WHITE;
 
     run(line, info_sz, 0);
 }
 
-bool Nonogram::Generator1D::attach(void (*const callback)(const Nonogram::Cell *line, size_t line_sz))
+bool Nonogram::Generator1D::attach(void (*const callback)(const Nonogram::Cell *line, std::size_t line_sz))
 {
     if (callback == nullptr) {
         return false;
@@ -147,7 +144,6 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
     else {
         const int block_sz = info[block_num];
         Cell *left = start, *right = start;
-        int t = 0, res = 0, s = 0;
 
         if (left + block_sz > line + line_sz) {
             return 0;
@@ -192,8 +188,8 @@ Nonogram::Board::Board(const Array<Array<Nonogram::Cell>> board)
 
 void Nonogram::Board::print() const
 {
-    for (int i = 0; i < board.size(); i++) {
-        for (int j = 0; j < board[i].size(); j++) {
+    for (std::size_t i = 0; i < board.size(); i++) {
+        for (std::size_t j = 0; j < board[i].size(); j++) {
             switch (board[i][j]) {
             case BLACK:
                 std::cout << '#';
@@ -257,18 +253,18 @@ bool Nonogram::isWellFormed() const
 
     if (m == 0 || n == 0)
         return false;
-    for (int i = 0; i < m; i++)
+    for (std::size_t i = 0; i < m; i++)
         if (rows[i].size() == 0)
             return false;
-    for (int j = 0; j < n; j++)
+    for (std::size_t j = 0; j < n; j++)
         if (cols[j].size() == 0)
             return false;
-    for (int i = 0; i < m; i++)
+    for (std::size_t i = 0; i < m; i++)
         if (rows[i].size() == 1 && rows[i][0] == 0)
             continue;
         else {
             int t = 0;
-            for (int k = 0; k < rows[i].size(); k++)
+            for (std::size_t k = 0; k < rows[i].size(); k++)
                 if (rows[i][k] <= 0)
                     return false;
                 else {
@@ -280,12 +276,12 @@ bool Nonogram::isWellFormed() const
             if (t > m)
                 return false;
         }
-    for (int j = 0; j < n; j++)
+    for (std::size_t j = 0; j < n; j++)
         if (cols[j].size() == 1 && cols[j][0] == 0)
             continue;
         else {
             int t = 0;
-            for (int k = 0; k < cols[j].size(); k++)
+            for (std::size_t k = 0; k < cols[j].size(); k++)
                 if (cols[j][k] <= 0)
                     return false;
                 else {
@@ -335,12 +331,12 @@ Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> 
         throw Exception("***Nonogram::Solver::Solver(): m == 0 || n == 0\n");
 }
 
-Array<Nonogram::Board> Nonogram::Solver::solve()
+const Array<Nonogram::Board> &Nonogram::Solver::solve()
 {
     int num = 0;
-    for (int i = 0; i < m; i++)
+    for (std::size_t i = 0; i < m; i++)
         num += rows[i].size();
-    for (int i = 0; i < m * n; i++)
+    for (std::size_t i = 0; i < m * n; i++)
         board[i] = WHITE;
     run(board, num, 0, 0);
     return solutions;
@@ -358,8 +354,8 @@ const Nonogram::Cell &Nonogram::Solver::at(const int i, const int j) const
 
 void Nonogram::Solver::print() const
 {
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
+    for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t j = 0; j < n; j++) {
             switch (at(i, j)) {
             case BLACK:
                 std::cout << '#';
@@ -387,11 +383,11 @@ bool Nonogram::Solver::isAnswer()
 {
     int black_cnt = 0, k = 0;
 
-    for (int j = 0; j < n; j++) {
+    for (std::size_t j = 0; j < n; j++) {
         black_cnt = 0;
         k = 0;
 
-        for (int i = 0; i < m; i++)
+        for (std::size_t i = 0; i < m; i++)
             if (at(i, j) == BLACK)
                 black_cnt++;
             else {
@@ -425,9 +421,9 @@ bool Nonogram::Solver::isAnswer()
 Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
 {
     Array<Array<Cell>> ret = {};
-    for (int i = 0; i < m; i++) {
+    for (std::size_t i = 0; i < m; i++) {
         Array<Cell> line = {};
-        for (int j = 0; j < n; j++)
+        for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
         ret.push_back(std::move(line));
     }
@@ -455,7 +451,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
     else {
         const int block_sz = rows[i][block_num], next_depth = depth - 1;
         Cell *left = start_point, *right = start_point, *next_floor = nullptr;
-        int next_i = i, next_block_num = block_num + 1, res = 0;
+        int next_i = i, next_block_num = block_num + 1;
 
         if (rows[i].size() == 1 && rows[i][0] == 0)
             return run(&board[(i + 1) * n], next_depth, i + 1, 0);
@@ -569,9 +565,9 @@ Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesC
 
 Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Nonogram::SolverV2::Value_t> &line, const Array<int> &info)
 {
-    Array<Value_t> new_line = {};
     Generator generator{ .line_sz = line.size(), .info = info };
     const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
+    Array<Value_t> new_line = {};
 
     for (std::size_t i = 0; i < line.size(); i++) {
         if (line[i] == Unknown) {
@@ -601,7 +597,7 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
         bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        Array<Value_t> new_line = solveLine(line, rows[i]);
+        const Array<Value_t> new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t j = 0; j < n; j++)
@@ -624,7 +620,7 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
         bool done = true;
         for (std::size_t i = 0; i < m; i++)
             line.push_back(at(i, j));
-        Array<Value_t> new_line = solveLine(line, cols[j]);
+        const Array<Value_t> new_line = solveLine(line, cols[j]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t i = 0; i < m; i++)

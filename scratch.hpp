@@ -86,7 +86,7 @@ public:
         Solver() = delete;
         ~Solver();
         Solver(const Solver &other) = default;
-        std::vector<Board> solve(void);
+        const std::vector<Board> &solve(void);
         void clear(void);
     private:
         bool isAnswer(void);
