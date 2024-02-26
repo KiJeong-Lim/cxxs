@@ -17,7 +17,7 @@ void test_io()
 
     while(!prompt_finished) {
         prompt_finished = comm.runPrompt();
-        os.delay(10);
+        os.delay(5);
     }
 }
 

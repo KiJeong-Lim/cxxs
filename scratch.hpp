@@ -135,11 +135,11 @@ public:
         ~SolverV2();
         std::string solve(void);
     private:
-        Value_t &at(const int i, const int j)
+        Value_t &at(const std::size_t i, const std::size_t j)
         {
             return board[i * n + j];
         }
-        const Value_t &at(const int i, const int j) const
+        const Value_t &at(const std::size_t i, const std::size_t j) const
         {
             return board[i * n + j];
         }
@@ -154,10 +154,10 @@ public:
             Generator(std::size_t line_sz, const std::vector<int> &info);
             Generator(const Generator &other) = default;
             ~Generator();
-            std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &line_ref);
+            std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &reference);
         private:
             Generator() = delete;
-            bool run(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &result);
+            bool run(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &accum);
         };
     };
 private:

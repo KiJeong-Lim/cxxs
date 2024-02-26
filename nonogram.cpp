@@ -510,30 +510,29 @@ Nonogram::SolverV2::Generator::~Generator()
     line = nullptr;
 }
 
-bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &result)
+bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const std::size_t block_num, const Array<Nonogram::SolverV2::Value_t> &line_ref, Array<Array<Nonogram::Cell>> &accum)
 {
     if (block_num == info.size()) {
-        bool compatible = true;
+        bool is_compatible = true;
 
         for (std::size_t i = 0; i < line_sz; i++) {
             switch (line_ref[i]) {
             case Unknown:
                 break;
             case Sharp:
-                compatible &= (line[i] == BLACK);
+                is_compatible &= (line[i] == BLACK);
                 break;
             case Empty:
-                compatible &= (line[i] == WHITE);
+                is_compatible &= (line[i] == WHITE);
                 break;
             default:
-                compatible = false;
+                is_compatible = false;
                 break;
             }
         }
 
-        if (compatible) {
-            result.push_back(std::vector<Cell>(line, line + line_sz));
-        }
+        if (is_compatible)
+            accum.push_back(std::vector<Cell>(line, line + line_sz));
 
         return true;
     }
@@ -547,7 +546,7 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
         for (int b = 0; b < block_sz; b++)
             *right++ = BLACK;
 
-        while (run(right + 1, block_num + 1, line_ref, result)) {
+        while (run(right + 1, block_num + 1, line_ref, accum)) {
             if (right >= line + line_sz)
                 break;
             *left++ = WHITE;
@@ -561,10 +560,10 @@ bool Nonogram::SolverV2::Generator::run(Nonogram::Cell *const start_point, const
     }
 }
 
-Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const Array<Nonogram::SolverV2::Value_t> &line_ref)
+Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesCompatibleWith(const Array<Nonogram::SolverV2::Value_t> &reference)
 {
     Array<Array<Cell>> result = {};
-    run(line, 0, line_ref, result);
+    run(line, 0, reference, result);
     return result;
 }
 
@@ -609,7 +608,7 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
                 at(i, j) = new_line[j];
         }
         for (std::size_t j = 0; j < n; j++)
-            done &= (at(i, j) == Sharp) || (at(i, j) == Empty);
+            done &= (at(i, j) == Sharp || at(i, j) == Empty);
         rows_done[i] = done;
     }
 
