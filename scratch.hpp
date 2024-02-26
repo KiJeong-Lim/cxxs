@@ -205,7 +205,6 @@ public:
     }
 };
 
-extern "C" const struct OS_C_API os;
 extern SerialPrinter sout, serr;
 
 namespace test

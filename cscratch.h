@@ -16,4 +16,6 @@ struct OS_C_API {
     void (*clear)(void);
 };
 
+size_t int2size_t(int n);
+
 #endif

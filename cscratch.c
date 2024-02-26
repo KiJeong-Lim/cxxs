@@ -23,3 +23,15 @@ void clear_console()
 {
     system("cls");
 }
+
+size_t int2size_t(int n)
+{
+    if (n > 0) {
+        size_t result = 0;
+        while (--n >= 0)
+            result++;
+        return result;
+    }
+    else
+        return 0;
+}
