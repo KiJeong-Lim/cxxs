@@ -323,7 +323,7 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
 }
 
 Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
-    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, board{ nullptr }, solutions{ }
+    : rows{ rows }, cols{ cols }, m{ rows.size() }, n{ cols.size() }, board{ nullptr }, solutions{ Array<Board>{ } }
 {
     if (m > 0 && n > 0)
         board = new Cell [m * n];
@@ -444,7 +444,7 @@ int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, co
 
     if (depth == 0) {
         if (isAnswer())
-            solutions.push_back(Board{toMatrix()});
+            solutions.push_back(Board{ toMatrix() });
 
         return 1;
     }
