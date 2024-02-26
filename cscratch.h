@@ -18,4 +18,6 @@ struct OS_C_API {
 
 size_t int2size_t(int n);
 
+extern const struct OS_C_API os;
+
 #endif

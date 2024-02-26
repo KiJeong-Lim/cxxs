@@ -6,7 +6,7 @@
 static long long int longlongint_time(void);
 static void clear_console(void);
 
-struct OS_C_API os = {
+const struct OS_C_API os = {
     .delay = Sleep,
     .kbhit = kbhit,
     .getch = getch,
