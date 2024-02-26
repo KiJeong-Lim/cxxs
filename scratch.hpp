@@ -18,7 +18,7 @@ public:
     static std::string shows(const std::vector<int> &nums);
 };
 
-class IO { // To do: cover the case that the buffer is overflowed.
+class IO {
     char buffer[64];
     int cursor;
     int theend;

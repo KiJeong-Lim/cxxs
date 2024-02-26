@@ -52,7 +52,7 @@ void IO::setPrompt(void (*const prompt)(const char *msg))
 
 bool IO::runPrompt()
 {
-    char *msg = NULL;
+    char *msg = nullptr;
     int ch = '\0';
     bool prompt_routine_breaked = false;
 
@@ -87,7 +87,7 @@ int IO::getc()
 
 void IO::clear()
 {
-    for (int i = 0; i < len(buffer); i++) {
+    for (std::size_t i = 0; i < len(buffer); i++) {
         buffer[i] = '\0';
     }
     cursor = 0;
@@ -99,15 +99,15 @@ bool IO::takech(const int ch)
     switch (ch) {
     default:
         if (cursor < 0) {
-            result = NULL;
+            result = nullptr;
             return false;
         }
         if (cursor > theend) {
-            result = NULL;
+            result = nullptr;
             return false;
         }
-        if (theend + 1 >= len(buffer)) {
-            result = NULL;
+        if (int2size_t(theend + 1) >= len(buffer)) {
+            result = nullptr;
             return false;
         }
         for (int i = theend; i >= cursor; i--) {
@@ -116,19 +116,21 @@ bool IO::takech(const int ch)
         buffer[cursor++] = ch;
         buffer[++theend] = '\0';
         print();
-        result = NULL;
+        result = nullptr;
         return false;
     case '\b':
         if (cursor > theend) {
-            result = NULL;
+            result = nullptr;
             return false;
         }
-        if (theend + 1 >= len(buffer)) {
-            result = NULL;
+        if (int2size_t(theend + 1) >= len(buffer)) {
+            cursor = std::max(0, cursor - 1);
+            buffer[theend--] = '\0';
+            result = nullptr;
             return false;
         }
         if (cursor <= 0) {
-            result = NULL;
+            result = nullptr;
             return false;
         }
         for (int i = --cursor; i < theend; i++) {
@@ -138,7 +140,7 @@ bool IO::takech(const int ch)
             buffer[theend--] = '\0';
         }
         print();
-        result = NULL;
+        result = nullptr;
         return false;
     case '\n':
     case '\r':
@@ -149,11 +151,11 @@ bool IO::takech(const int ch)
     case ESC:
         clear();
         std::cout << '\n';
-        result = NULL;
+        result = nullptr;
         return true;
     case DIRECTION_KEY:
-        if (theend + 1 >= len(buffer)) {
-            result = NULL;
+        if (int2size_t(theend + 1) >= len(buffer)) {
+            result = nullptr;
             return false;
         }
         switch (getc()) {
@@ -162,14 +164,14 @@ bool IO::takech(const int ch)
                 cursor--;
             }
             print();
-            result = NULL;
+            result = nullptr;
             return false;
         case RIGHT_DIRECTION:
             if (cursor < theend) {
                 cursor++;
             }
             print();
-            result = NULL;
+            result = nullptr;
             return false;
         }
     }
@@ -185,7 +187,7 @@ void IO::print()
 {
     int i = 0;
     std::cout << '\r';
-    for (i = 0; i < len(buffer); i++)
+    for (i = 0; int2size_t(i) < len(buffer); i++)
         std::cout << ' ';
     std::cout << '\r';
     for (i = 0; i < cursor; i++)
