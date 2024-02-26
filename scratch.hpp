@@ -208,10 +208,13 @@ public:
 extern "C" const struct OS_C_API os;
 extern SerialPrinter sout, serr;
 
-void test_io(void);
-void test_nonogramsolver(void);
-void test_nonogramsolverv2(void);
-void test_nonogramsolverlogic(void);
-void test_serialprinter(void);
+namespace test
+{
+    void io(void);
+    void nonogramsolver(void);
+    void nonogramsolverv2(void);
+    void nonogramsolverlogic(void);
+    void serialprinter(void);
+}
 
 #endif

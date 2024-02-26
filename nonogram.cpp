@@ -7,7 +7,7 @@ template <typename ELEM> using Array = std::vector<ELEM>;
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t sz);
 static unsigned long long int generator1d_callback_call_count = 0;
 
-void test_nonogramsolver()
+void test::nonogramsolver()
 {
     try {
         auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
@@ -21,7 +21,7 @@ void test_nonogramsolver()
     }
 }
 
-void test_nonogramsolverv2()
+void test::nonogramsolverv2()
 {
     try {
         auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
@@ -32,6 +32,22 @@ void test_nonogramsolverv2()
     catch (const std::exception &e) {
         std::cerr << e.what();
     }
+}
+
+void test::nonogramsolverlogic()
+{
+    int info[] = { 2, 1, 3, 2, };
+    Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
+    Nonogram::Generator1D gen = {};
+    bool well_formed = gen.init(line, len(line), info, len(info));
+
+    if (well_formed) {
+        gen.attach(debug_Generator1D_callback);
+        gen.exec();
+        std::cout << "count = " << generator1d_callback_call_count << std::endl;
+    }
+    else
+        std::cout << "***test_nonogramsolverlogic(): ill-formed\n";
 }
 
 void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::size_t line_sz)
@@ -56,22 +72,6 @@ void debug_Generator1D_callback(const Nonogram::Cell *const line, const std::siz
     std::cout << std::endl;
 
     generator1d_callback_call_count++;
-}
-
-void test_nonogramsolverlogic()
-{
-    int info[] = { 2, 1, 3, 2, };
-    Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
-    Nonogram::Generator1D gen = {};
-    bool well_formed = gen.init(line, len(line), info, len(info));
-
-    if (well_formed) {
-        gen.attach(debug_Generator1D_callback);
-        gen.exec();
-        std::cout << "count = " << generator1d_callback_call_count << std::endl;
-    }
-    else
-        std::cout << "***test_nonogramsolverlogic(): ill-formed\n";
 }
 
 Nonogram::Generator1D::Generator1D()
