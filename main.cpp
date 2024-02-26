@@ -4,8 +4,7 @@ static void press_any_key(void);
 
 int main(void)
 {
-    test::nonogramsolverv2();
-    press_any_key();
+    test::io();
     return 0;
 }
 

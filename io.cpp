@@ -106,7 +106,7 @@ bool IO::takech(const int ch)
             result = nullptr;
             return false;
         }
-        if (int2size_t(theend + 1) >= len(buffer)) {
+        if (int2size_t(theend) + 1 >= len(buffer)) {
             result = nullptr;
             return false;
         }
@@ -123,7 +123,7 @@ bool IO::takech(const int ch)
             result = nullptr;
             return false;
         }
-        if (int2size_t(theend + 1) >= len(buffer)) {
+        if (int2size_t(theend) >= len(buffer)) {
             cursor = std::max(0, cursor - 1);
             buffer[theend--] = '\0';
             result = nullptr;
@@ -154,10 +154,6 @@ bool IO::takech(const int ch)
         result = nullptr;
         return true;
     case DIRECTION_KEY:
-        if (int2size_t(theend + 1) >= len(buffer)) {
-            result = nullptr;
-            return false;
-        }
         switch (getc()) {
         case LEFT_DIRECTION:
             if (cursor > 0) {
@@ -167,6 +163,10 @@ bool IO::takech(const int ch)
             result = nullptr;
             return false;
         case RIGHT_DIRECTION:
+            if (int2size_t(theend) >= len(buffer)) {
+                result = nullptr;
+                return false;
+            }
             if (cursor < theend) {
                 cursor++;
             }
