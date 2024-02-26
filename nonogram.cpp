@@ -90,7 +90,7 @@ void Nonogram::Generator1D::exec()
     run(line, info_sz, 0);
 }
 
-bool Nonogram::Generator1D::attach(void (*const callback)(const Nonogram::Cell *line, size_t line_sz))
+bool Nonogram::Generator1D::attach(void (*const callback)(const Nonogram::Cell *line, std::size_t line_sz))
 {
     if (callback == nullptr) {
         return false;
@@ -569,9 +569,9 @@ Array<Array<Nonogram::Cell>> Nonogram::SolverV2::Generator::findAllPossiblitiesC
 
 Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Nonogram::SolverV2::Value_t> &line, const Array<int> &info)
 {
-    Array<Value_t> new_line = {};
     Generator generator{ .line_sz = line.size(), .info = info };
     const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
+    Array<Value_t> new_line = {};
 
     for (std::size_t i = 0; i < line.size(); i++) {
         if (line[i] == Unknown) {
@@ -601,7 +601,7 @@ bool Nonogram::SolverV2::checkRow(const std::size_t i)
         bool done = true;
         for (std::size_t j = 0; j < n; j++)
             line.push_back(at(i, j));
-        Array<Value_t> new_line = solveLine(line, rows[i]);
+        const Array<Value_t> new_line = solveLine(line, rows[i]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t j = 0; j < n; j++)
@@ -624,7 +624,7 @@ bool Nonogram::SolverV2::checkCol(const std::size_t j)
         bool done = true;
         for (std::size_t i = 0; i < m; i++)
             line.push_back(at(i, j));
-        Array<Value_t> new_line = solveLine(line, cols[j]);
+        const Array<Value_t> new_line = solveLine(line, cols[j]);
         if (new_line != line) {
             has_changed = true;
             for (std::size_t i = 0; i < m; i++)
