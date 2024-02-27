@@ -3,13 +3,18 @@
 #include <conio.h>
 #include "cscratch.h"
 
+#define special_key_flag_default_value (-1)
+
 static long long int longlongint_time(void);
 static void clear_console(void);
+static int smart_getch(void);
+
+int special_key_flag = -1;
 
 const struct OS_C_API os = {
     .delay = Sleep,
-    .kbhit = kbhit,
-    .getch = getch,
+    .kbhit = _kbhit,
+    .getch = smart_getch,
     .itime = longlongint_time,
     .clear = clear_console,
 };
@@ -36,12 +41,24 @@ size_t int2size_t(int n)
         return 0;
 }
 
+int smart_getch()
+{
+    int ch = _getch();
+    switch (ch) {
+    case 0x00:
+    case 0xE0:
+        special_key_flag = ch;
+        return getch();
+    default:
+        special_key_flag = special_key_flag_default_value;
+        return ch;
+    }
+}
+
 void print_and_wait(const char *const msg)
 {
     printf("%s\n", msg);
     os.getch();
-    while (os.kbhit())
-        os.getch();
 }
 
 void press_any_key()

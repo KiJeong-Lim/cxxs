@@ -21,5 +21,6 @@ void print_and_wait(const char *msg);
 void press_any_key(void);
 
 extern const struct OS_C_API os;
+extern int special_key_flag;
 
 #endif

@@ -1,10 +1,9 @@
 #include "scratch.hpp"
 
 #define ESC             27
-#define DIRECTION_KEY   224
 #define LEFT_DIRECTION  75
 #define RIGHT_DIRECTION 77
-#define DELETE_KEY      127
+#define DEL_KEY         83
 
 static void test_prompt(const char *msg);
 static char hex2char(unsigned int hex);
@@ -77,11 +76,9 @@ bool IO::runPrompt()
 int IO::getc()
 {
     int res = 0;
-
     if (os.kbhit()) {
         res = os.getch();
     }
-
     return res;
 }
 
@@ -96,67 +93,18 @@ void IO::clear()
 
 bool IO::takech(const int ch)
 {
-    switch (ch) {
-    default:
-        if (cursor < 0) {
-            result = nullptr;
-            return false;
-        }
-        if (cursor > theend) {
-            result = nullptr;
-            return false;
-        }
-        if (int2size_t(theend) + 1 >= len(buffer)) {
-            result = nullptr;
-            return false;
-        }
-        for (int i = theend; i >= cursor; i--) {
-            buffer[i + 1] = buffer[i];
-        }
-        buffer[cursor++] = ch;
-        buffer[++theend] = '\0';
-        print();
+    switch (special_key_flag) {
+    case 0x00:
         result = nullptr;
         return false;
-    case '\b':
-        if (cursor > theend) {
+    case 0xE0:
+        switch (ch) {
+        case DEL_KEY:
+            if (theend > cursor)
+                buffer[--theend] = '\0';
+            print();
             result = nullptr;
             return false;
-        }
-        if (int2size_t(theend) >= len(buffer)) {
-            if (cursor > 0)
-                cursor--;
-            buffer[theend--] = '\0';
-            result = nullptr;
-            return false;
-        }
-        if (cursor <= 0) {
-            result = nullptr;
-            return false;
-        }
-        cursor--;
-        for (int i = cursor; i < theend; i++) {
-            buffer[i] = buffer[i + 1];
-        }
-        if (theend > 0) {
-            buffer[theend--] = '\0';
-        }
-        print();
-        result = nullptr;
-        return false;
-    case '\n':
-    case '\r':
-        result = buffer;
-        return true;
-    case '\0':
-        return false;
-    case ESC:
-        clear();
-        std::cout << '\n';
-        result = nullptr;
-        return true;
-    case DIRECTION_KEY:
-        switch (getc()) {
         case LEFT_DIRECTION:
             if (cursor > 0) {
                 cursor--;
@@ -175,6 +123,67 @@ bool IO::takech(const int ch)
             print();
             result = nullptr;
             return false;
+        }
+    case -1:
+        switch (ch) {
+        default:
+            if (cursor < 0) {
+                result = nullptr;
+                return false;
+            }
+            if (cursor > theend) {
+                result = nullptr;
+                return false;
+            }
+            if (int2size_t(theend) + 1 >= len(buffer)) {
+                result = nullptr;
+                return false;
+            }
+            for (int i = theend; i >= cursor; i--) {
+                buffer[i + 1] = buffer[i];
+            }
+            buffer[cursor++] = ch;
+            buffer[++theend] = '\0';
+            print();
+            result = nullptr;
+            return false;
+        case '\b':
+            if (cursor > theend) {
+                result = nullptr;
+                return false;
+            }
+            if (int2size_t(theend) >= len(buffer)) {
+                if (cursor > 0)
+                    cursor--;
+                buffer[theend--] = '\0';
+                result = nullptr;
+                return false;
+            }
+            if (cursor <= 0) {
+                result = nullptr;
+                return false;
+            }
+            cursor--;
+            for (int i = cursor; i < theend; i++) {
+                buffer[i] = buffer[i + 1];
+            }
+            if (theend > 0) {
+                buffer[theend--] = '\0';
+            }
+            print();
+            result = nullptr;
+            return false;
+        case '\n':
+        case '\r':
+            result = buffer;
+            return true;
+        case '\0':
+            return false;
+        case ESC:
+            clear();
+            std::cout << '\n';
+            result = nullptr;
+            return true;
         }
     }
     return false;
