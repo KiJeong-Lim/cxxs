@@ -9,8 +9,8 @@
 static void test_prompt(const char *msg);
 static char hex2char(unsigned int hex);
 
-SerialPrinter obj::sout{ .prefix = "arduino> " };
-SerialPrinter obj::serr{ .prefix = "WARNING> " };
+SerialPrinter gblobj::sout{ .prefix = "arduino> " };
+SerialPrinter gblobj::serr{ .prefix = "WARNING> " };
 
 void test::io()
 {
@@ -27,8 +27,8 @@ void test::io()
 
 void test::serialprinter()
 {
-    obj::sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
-    obj::sout << "world" << ' ' << 5678 << ' ' << 2.718281;
+    gblobj::sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
+    gblobj::sout << "world" << ' ' << 5678 << ' ' << 2.718281;
 }
 
 void test_prompt(const char *const msg)

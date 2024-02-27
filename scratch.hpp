@@ -163,7 +163,6 @@ public:
     ~SerialPrinter();
     SerialPrinter(SerialPrinter &&other);
     SerialPrinter(const char *prefix);
-    SerialPrinter(const char *prefix, bool lend);
     SerialPrinter operator<<(bool b);
     SerialPrinter operator<<(byte x);
     SerialPrinter operator<<(int n);
@@ -173,10 +172,11 @@ public:
     SerialPrinter operator<<(const std::string &s);
     SerialPrinter operator<<(const std::stringstream &ss);
 private:
+    SerialPrinter(const char *prefix, bool lend);
     void trick();
 };
 
-namespace obj
+namespace gblobj
 {
     extern SerialPrinter sout, serr;
 }
