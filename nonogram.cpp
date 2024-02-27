@@ -1,6 +1,6 @@
 #include "scratch.hpp"
 
-#define DEBUG 0
+#define DEBUG 1
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 
@@ -124,13 +124,10 @@ bool Nonogram::Generator1D::init(Nonogram::Cell *const line, const std::size_t l
 int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, const int block_num)
 {
 #if defined(DEBUG)
-#if DEBUG > 0
-    char char128[128];
-    printf("[CALLED: depth = %d, start = %d, block_num = %d] ", depth, start - line, block_num);
+    std::cout << "[CALLED] depth = " << depth << ", start = " << start - line << ", block_num = " << block_num << ' ';
     print();
-    printf("\n");
-    gets(char128);
-#endif
+    std::cout << std::endl;
+    print_and_wait("");
 #endif
 
     if (depth == 0) {
@@ -149,7 +146,7 @@ int Nonogram::Generator1D::run(Nonogram::Cell *const start, const int depth, con
             *right++ = BLACK;
 
         while (run(right + 1, depth - 1, block_num + 1)) {
-            if (left + block_sz >= line + line_sz)
+            if (right >= line + line_sz)
                 break;
             else {
                 *left++ = WHITE;
@@ -431,13 +428,10 @@ Array<Array<Nonogram::Cell>> Nonogram::Solver::toMatrix() const
 int Nonogram::Solver::run(Nonogram::Cell *const start_point, const int depth, const int i, const int block_num)
 {
 #if defined(DEBUG)
-#if DEBUG > 0
-    char char128[128];
-    printf("[CALLED: start_point = %d, depth = %d, i = %d, block_num = %d]\n", start_point - board, depth, i, block_num);
+    std::cout << "[CALLED] depth = " << depth << ", start_point = " << start_point - board << ", i = " << i << ", block_num = " << block_num << std::endl;
     print();
-    printf("\n");
-    gets(char128);
-#endif
+    std::cout << std::endl;
+    print_and_wait("");
 #endif
 
     if (depth == 0) {
@@ -566,7 +560,7 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
     Generator generator{ .line_sz = line.size(), .info = info };
     const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
     Array<Value_t> new_line = {};
-    Array<Cell> xs = {};
+    Array<Cell> xs{ };
 
     for (std::size_t i = 0; i < line.size(); i++) {
         switch (line[i]) {

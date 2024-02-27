@@ -35,3 +35,17 @@ size_t int2size_t(int n)
     else
         return 0;
 }
+
+void print_and_wait(const char *const msg)
+{
+    printf("%s\n", msg);
+    os.getch();
+    while (os.kbhit())
+        os.getch();
+}
+
+void press_any_key()
+{
+    print_and_wait("Press any key...");
+}
+

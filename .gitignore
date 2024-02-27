@@ -1,7 +1,7 @@
 # Dev-C++
-Makefile.win
 *.dev
 *.layout
+Makefile.win
 
 # Prerequisites
 *.d
