@@ -1,14 +1,12 @@
 #include "scratch.hpp"
 
-static void scratch(void);
-
 int main(void)
 {
-    scratch();
+    prog::scratch();
     return 0;
 }
 
-void scratch()
+void prog::scratch()
 {
     int menu = 0;
     std::string prompt = "";
@@ -23,7 +21,7 @@ void scratch()
     std::stringstream{ prompt } >> menu;
     switch (menu) {
     case 1:
-        prog::solveNonogram();
+        prog::solvenonogram();
         break;
     default:
         std::cout << "No menu selected...\n";

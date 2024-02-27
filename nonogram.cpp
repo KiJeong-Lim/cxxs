@@ -7,7 +7,7 @@ template <typename ELEM> using Array = std::vector<ELEM>;
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t line_sz);
 static unsigned long long int generator1d_callback_call_count = 0;
 
-void prog::solveNonogram()
+void prog::solvenonogram()
 {
     std::string file_name{ };
     std::cout << "Enter the file dir. of the Nonogram puzzle: ";

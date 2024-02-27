@@ -184,7 +184,8 @@ namespace gblobj
 
 namespace prog
 {
-    void solveNonogram(void);
+    void solvenonogram(void);
+    void scratch(void);
 }
 
 namespace test
