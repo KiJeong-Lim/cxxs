@@ -9,8 +9,8 @@
 static void test_prompt(const char *msg);
 static char hex2char(unsigned int hex);
 
-SerialPrinter sout = { .prefix = "arduino> " };
-SerialPrinter serr = { .prefix = "WARNING> " };
+SerialPrinter obj::sout{ .prefix = "arduino> " };
+SerialPrinter obj::serr{ .prefix = "WARNING> " };
 
 void test::io()
 {
@@ -27,8 +27,8 @@ void test::io()
 
 void test::serialprinter()
 {
-    sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
-    sout << "world" << ' ' << 5678 << ' ' << 2.718281;
+    obj::sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
+    obj::sout << "world" << ' ' << 5678 << ' ' << 2.718281;
 }
 
 void test_prompt(const char *const msg)
@@ -134,7 +134,8 @@ bool IO::takech(const int ch)
             result = nullptr;
             return false;
         }
-        for (int i = --cursor; i < theend; i++) {
+        cursor--;
+        for (int i = cursor; i < theend; i++) {
             buffer[i] = buffer[i + 1];
         }
         if (theend > 0) {

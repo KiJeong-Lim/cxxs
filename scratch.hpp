@@ -176,36 +176,10 @@ private:
     void trick();
 };
 
-class Foo {
-public:
-    Foo()
-    {
-        std::cout << "Foo::Foo()\n";
-    }
-    ~Foo()
-    {
-        std::cout << "Foo::~Foo()\n";
-    }
-    Foo(const Foo &other)
-    {
-        std::cout << "Foo::Foo(const Foo &other)\n";
-    }
-    Foo(Foo &&other)
-    {
-        std::cout << "Foo::Foo(Foo &&other)\n";
-    }
-    Foo &operator=(Foo &&rhs)
-    {
-        std::cout << "Foo &Foo::operator=(Foo &&rhs)\n";
-        return *this;
-    }
-    static Foo mkFoo(void)
-    {
-        return Foo{ };
-    }
-};
-
-extern SerialPrinter sout, serr;
+namespace obj
+{
+    extern SerialPrinter sout, serr;
+}
 
 namespace test
 {
@@ -214,6 +188,7 @@ namespace test
     void nonogramsolverv2(void);
     void nonogramsolverlogic(void);
     void serialprinter(void);
+    void foo(void);
 }
 
 #endif

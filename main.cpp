@@ -5,6 +5,7 @@ static void press_any_key(void);
 int main(void)
 {
     test::io();
+    press_any_key();
     return 0;
 }
 
