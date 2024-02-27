@@ -7,6 +7,24 @@ template <typename ELEM> using Array = std::vector<ELEM>;
 static void debug_Generator1D_callback(const Nonogram::Cell *line, std::size_t line_sz);
 static unsigned long long int generator1d_callback_call_count = 0;
 
+void prog::solveNonogram()
+{
+    std::string file_name{ };
+    std::cout << "Enter the file dir. of the Nonogram puzzle: ";
+    std::cout.flush();
+    std::cin >> file_name;
+    try {
+        auto puzzle = Nonogram::scanPuzzle(file_name.c_str());
+        auto solver = puzzle.mkSolverV2();
+        auto solution = solver.solve();
+        std::cout << std::endl;
+        std::cout << solution;
+    }
+    catch (const std::exception &e) {
+        std::cout << "Abort...\n";
+    }
+}
+
 void test::nonogramsolver()
 {
     try {
@@ -16,7 +34,7 @@ void test::nonogramsolver()
         for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
             sol->print();
     }
-    catch (const std::exception &e) {
+    catch (const Nonogram::Exception &e) {
         std::cerr << e.what();
     }
 }
@@ -29,7 +47,7 @@ void test::nonogramsolverv2()
         auto solution = solver.solve();
         std::cout << solution;
     }
-    catch (const std::exception &e) {
+    catch (const Nonogram::Exception &e) {
         std::cerr << e.what();
     }
 }
@@ -216,11 +234,14 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
     try {
         file.open(file_name, std::ios::in);
         if (file.bad()) {
-            throw Exception("***Nonogram::scan(): cannot open the file\n");
+            throw Exception("***Nonogram::scanPuzzle(): cannot open the file...\n");
         }
         getline(file, line);
+        if (line == std::string{ "" }) {
+            throw Exception("***Nonogram::scanPuzzle(): cannot open the file...\n");
+        }
         if (line != std::string{ "rows" }) {
-            throw Exception("***Nonogram::scan(): expected \'rows\'\n");
+            throw Exception("***Nonogram::scanPuzzle(): expected \'rows\'...\n");
         }
         while (getline(file, line)) {
             if (line == std::string{ "cols" })
@@ -233,13 +254,17 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
             cols.push_back(IntegerHelper::reads(line));
         }
         file.close();
+        return Nonogram{ .rows = rows, .cols = cols };
+    }
+    catch (const Nonogram::Exception &e) {
+        file.close();
+        std::cout << e.what();
+        throw e;
     }
     catch (const std::exception &e) {
-        std::cerr << e.what();
         file.close();
+        throw e;
     }
-
-    return Nonogram(rows, cols);
 }
 
 bool Nonogram::isWellFormed() const
@@ -296,7 +321,7 @@ Nonogram::Solver Nonogram::mkSolver() const
     if (isWellFormed())
         return Solver{ .rows = rows, .cols = cols };
     else
-        throw Exception("***Nonogram::mkSolver(): puzzle ill-formed\n");
+        throw Exception("***Nonogram::mkSolver(): puzzle ill-formed...\n");
 }
 
 Nonogram::SolverV2 Nonogram::mkSolverV2() const
@@ -314,7 +339,7 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
         return SolverV2{ .rows = rows, .cols = cols };
     }
     else
-        throw Exception("***Nonogram::mkSolverV2(): puzzle ill-formed\n");
+        throw Exception("***Nonogram::mkSolverV2(): puzzle ill-formed...\n");
 }
 
 Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
@@ -323,7 +348,7 @@ Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> 
     if (m > 0 && n > 0)
         board = new Cell [m * n];
     else
-        throw Exception("***Nonogram::Solver::Solver(): m == 0 || n == 0\n");
+        throw Exception("***Nonogram::Solver::Solver(): m == 0 || n == 0...\n");
 }
 
 const Array<Nonogram::Board> &Nonogram::Solver::solve()
@@ -658,7 +683,7 @@ std::string Nonogram::SolverV2::solve()
         return ss.str();
     }
     else
-        return std::string{ "***Nonogram::SolverV2::solve(): cannot solve the puzzle\n" };
+        return std::string{ "***Nonogram::SolverV2::solve(): cannot solve the puzzle...\n" };
 }
 
 Nonogram::SolverV2::SolverV2(const Array<Array<int>> &rows, const Array<Array<int>> &cols)

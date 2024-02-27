@@ -182,6 +182,11 @@ namespace gblobj
     extern SerialPrinter serr;
 }
 
+namespace prog
+{
+    void solveNonogram(void);
+}
+
 namespace test
 {
     void io(void);
