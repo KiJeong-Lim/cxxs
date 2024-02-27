@@ -124,7 +124,7 @@ bool IO::takech(const int ch)
             result = nullptr;
             return false;
         }
-    case -1:
+    case NOT_A_SPECIAL_KEY:
         switch (ch) {
         default:
             if (cursor < 0) {

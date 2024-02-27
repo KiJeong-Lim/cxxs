@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define len(xs)     (sizeof(xs)/sizeof((xs)[0]))
+#define NOT_A_SPECIAL_KEY   (-1)
+#define len(xs)             (sizeof(xs)/sizeof((xs)[0]))
 
 struct OS_C_API {
     void (*delay)(unsigned long int sleeping_time);

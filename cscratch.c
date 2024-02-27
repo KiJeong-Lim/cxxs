@@ -3,7 +3,7 @@
 #include <conio.h>
 #include "cscratch.h"
 
-#define special_key_flag_default_value (-1)
+#define SPECIAL_KEY_DEFAULT_FLAG (-1)
 
 static long long int longlongint_time(void);
 static void clear_console(void);
@@ -50,7 +50,7 @@ int smart_getch()
         special_key_flag = ch;
         return getch();
     default:
-        special_key_flag = special_key_flag_default_value;
+        special_key_flag = NOT_A_SPECIAL_KEY;
         return ch;
     }
 }
