@@ -178,7 +178,8 @@ private:
 
 namespace gblobj
 {
-    extern SerialPrinter sout, serr;
+    extern SerialPrinter sout;
+    extern SerialPrinter serr;
 }
 
 namespace test
