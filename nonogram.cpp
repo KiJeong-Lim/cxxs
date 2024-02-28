@@ -10,7 +10,7 @@ static unsigned long long int generator1d_callback_call_count = 0;
 void prog::solvenonogram()
 {
     std::string file_name{ };
-    std::cout << "Enter the file dir. of the Nonogram puzzle: ";
+    std::cout << "Enter the file name of the Nonogram puzzle: ";
     std::cout.flush();
     std::cin >> file_name;
     try {
@@ -402,11 +402,9 @@ void Nonogram::Solver::clear()
 bool Nonogram::Solver::isAnswer()
 {
     int black_cnt = 0, k = 0;
-
     for (std::size_t j = 0; j < n; j++) {
         black_cnt = 0;
         k = 0;
-
         for (std::size_t i = 0; i < m; i++)
             if (at(i, j) == BLACK)
                 black_cnt++;
@@ -434,7 +432,6 @@ bool Nonogram::Solver::isAnswer()
                 return false;
         } 
     }
-
     return true;
 }
 
@@ -550,10 +547,10 @@ bool Nonogram::SolverV2::Generator::accumulatePossiblities(Nonogram::Cell *const
     else {
         const int block_sz = info[block_num];
         Cell *left = start_point, *right = start_point;
+        int rest_line_len = block_sz;
         if (start_point + block_sz > line + line_sz)
             return false;
         else {
-            int rest_line_len = block_sz;
             for (std::size_t i = block_num + 1; i < info_sz; i++)
                 rest_line_len += info[i] + 1;
             for (int b = 0; b < block_sz; b++)
@@ -585,7 +582,7 @@ Array<Nonogram::SolverV2::Value_t> Nonogram::SolverV2::solveLine(const Array<Non
     Generator generator{ .line_sz = line.size(), .info = info };
     const Array<Array<Cell>> possiblities = generator.findAllPossiblitiesCompatibleWith(line);
     Array<Value_t> new_line = {};
-    Array<Cell> xs{ };
+    Array<Cell> xs = {};
 
     for (std::size_t i = 0; i < line.size(); i++) {
         switch (line[i]) {

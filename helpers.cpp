@@ -11,6 +11,8 @@ std::vector<int> IntegerHelper::reads(const std::string &str)
         ss >> s;
         if (std::stringstream{ s } >> x)
             xs.push_back(x);
+        else
+            break;
         s = "";
     }
 
