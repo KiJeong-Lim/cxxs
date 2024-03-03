@@ -27,34 +27,24 @@ void prog::solvenonogram()
 
 void test::nonogramsolver()
 {
-    try {
-        auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
-        auto solver = puzzle.mkSolver();
-        auto solutions = solver.solve();
-        for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
-            sol->print();
-    }
-    catch (const Nonogram::Exception &e) {
-        std::cerr << e.what();
-    }
+    auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
+    auto solver = puzzle.mkSolver();
+    auto solutions = solver.solve();
+    for (auto sol = solutions.cbegin(); sol != solutions.cend(); ++sol)
+        sol->print();
 }
 
 void test::nonogramsolverv2()
 {
-    try {
-        auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
-        auto solver = puzzle.mkSolverV2();
-        auto solution = solver.solve();
-        std::cout << solution;
-    }
-    catch (const Nonogram::Exception &e) {
-        std::cerr << e.what();
-    }
+    auto puzzle = Nonogram::scanPuzzle("nonogramtest.txt");
+    auto solver = puzzle.mkSolverV2();
+    auto solution = solver.solve();
+    std::cout << solution;
 }
 
 void test::nonogramsolverlogic()
 {
-    int info[] = { 2, 1, 3, 2, };
+    int info[] = {2,1,3,2,};
     Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
     Nonogram::Generator1D gen = {};
 
@@ -234,14 +224,14 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
     try {
         file.open(file_name, std::ios::in);
         if (file.bad()) {
-            throw Exception("***Nonogram::scanPuzzle(): cannot open the file...\n");
+            throw Exception{ "***Nonogram::scanPuzzle(): cannot open the file...\n" };
         }
         getline(file, line);
         if (line == std::string{ "" }) {
-            throw Exception("***Nonogram::scanPuzzle(): cannot open the file...\n");
+            throw Exception{ "***Nonogram::scanPuzzle(): cannot open the file...\n" };
         }
         if (line != std::string{ "rows" }) {
-            throw Exception("***Nonogram::scanPuzzle(): expected \'rows\'...\n");
+            throw Exception{ "***Nonogram::scanPuzzle(): expected \'rows\'...\n" };
         }
         while (getline(file, line)) {
             if (line == std::string{ "cols" })
@@ -321,7 +311,7 @@ Nonogram::Solver Nonogram::mkSolver() const
     if (isWellFormed())
         return Solver{ .rows = rows, .cols = cols };
     else
-        throw Exception("***Nonogram::mkSolver(): puzzle ill-formed...\n");
+        throw Exception{ "***Nonogram::mkSolver(): puzzle ill-formed...\n" };
 }
 
 Nonogram::SolverV2 Nonogram::mkSolverV2() const
@@ -339,7 +329,7 @@ Nonogram::SolverV2 Nonogram::mkSolverV2() const
         return SolverV2{ .rows = rows, .cols = cols };
     }
     else
-        throw Exception("***Nonogram::mkSolverV2(): puzzle ill-formed...\n");
+        throw Exception{ "***Nonogram::mkSolverV2(): puzzle ill-formed...\n" };
 }
 
 Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
@@ -348,7 +338,7 @@ Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> 
     if (m > 0 && n > 0)
         board = new Cell [m * n];
     else
-        throw Exception("***Nonogram::Solver::Solver(): m == 0 || n == 0...\n");
+        throw Exception{ "***Nonogram::Solver::Solver(): m == 0 || n == 0...\n" };
 }
 
 const Array<Nonogram::Board> &Nonogram::Solver::solve()
