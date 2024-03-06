@@ -194,9 +194,10 @@ void IO::sync(char *&msg) const
     msg = result;
 }
 
-void IO::print()
+void IO::print() const
 {
     int i = 0;
+
     std::cout << '\r';
     for (i = 0; int2size_t(i) < len(buffer); i++)
         std::cout << ' ';
@@ -205,7 +206,6 @@ void IO::print()
         std::cout << ' ';
     for (i = cursor; i < theend; i++)
         std::cout << buffer[i];
-    buffer[i] = '\0';
     std::cout << '\r';
     for (i = 0; i < cursor; i++)
         std::cout << buffer[i];
