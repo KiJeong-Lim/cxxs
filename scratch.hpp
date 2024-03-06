@@ -33,9 +33,9 @@ public:
     static int getc(void);
 private:
     bool takech(int ch);
-    void print(void);
+    void print(void) const;
     void clear(void);
-    void sync(char *&msg);
+    void sync(char *&msg) const;
 };
 
 class Nonogram {
