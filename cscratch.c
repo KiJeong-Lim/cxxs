@@ -43,12 +43,13 @@ size_t int2size_t(int n)
 
 int smart_getch()
 {
-    int ch = _getch();
+    int ch = '\0';
+    ch = _getch();
     switch (ch) {
     case 0x00:
     case 0xE0:
         special_key_flag = ch;
-        return getch();
+        return _getch();
     default:
         special_key_flag = NOT_A_SPECIAL_KEY;
         return ch;
