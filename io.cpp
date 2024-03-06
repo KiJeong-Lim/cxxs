@@ -95,58 +95,44 @@ bool IO::takech(const int ch)
 {
     switch (special_key_flag) {
     case 0x00:
-        result = nullptr;
-        return false;
+        break;
     case 0xE0:
         switch (ch) {
         case DEL_KEY:
             if (theend > cursor)
                 buffer[--theend] = '\0';
             print();
-            result = nullptr;
-            return false;
+            break;
         case LEFT_DIRECTION:
-            if (cursor > 0) {
+            if (cursor > 0)
                 cursor--;
-            }
             print();
-            result = nullptr;
-            return false;
+            break;
         case RIGHT_DIRECTION:
-            if (int2size_t(theend) >= len(buffer)) {
-                result = nullptr;
-                return false;
-            }
-            if (cursor < theend) {
+            if (int2size_t(theend) >= len(buffer))
+                break;
+            if (cursor < theend)
                 cursor++;
-            }
             print();
-            result = nullptr;
-            return false;
+            break;
         }
+        break;
     case NOT_A_SPECIAL_KEY:
         switch (ch) {
         default:
-            if (cursor < 0) {
-                result = nullptr;
-                return false;
-            }
-            if (cursor > theend) {
-                result = nullptr;
-                return false;
-            }
-            if (int2size_t(theend) + 1 >= len(buffer)) {
-                result = nullptr;
-                return false;
-            }
+            if (cursor < 0)
+                break;
+            if (cursor > theend)
+                break;
+            if (int2size_t(theend) + 1 >= len(buffer))
+                break;
             for (int i = theend; i >= cursor; i--) {
                 buffer[i + 1] = buffer[i];
             }
             buffer[cursor++] = ch;
             buffer[++theend] = '\0';
             print();
-            result = nullptr;
-            return false;
+            break;
         case '\b':
             if (cursor > theend) {
                 result = nullptr;
@@ -171,21 +157,22 @@ bool IO::takech(const int ch)
                 buffer[theend--] = '\0';
             }
             print();
-            result = nullptr;
-            return false;
+            break;
         case '\n':
         case '\r':
             result = buffer;
             return true;
         case '\0':
-            return false;
+            break;
         case ESC:
             clear();
             std::cout << '\n';
             result = nullptr;
             return true;
         }
+        break;
     }
+    result = nullptr;
     return false;
 }
 
@@ -197,7 +184,6 @@ void IO::sync(char *&msg) const
 void IO::print() const
 {
     int i = 0;
-
     std::cout << '\r';
     for (i = 0; int2size_t(i) < len(buffer); i++)
         std::cout << ' ';
