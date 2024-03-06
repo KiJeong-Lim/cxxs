@@ -142,13 +142,10 @@ bool IO::takech(const int ch)
                 if (cursor > 0)
                     cursor--;
                 buffer[theend--] = '\0';
-                result = nullptr;
-                return false;
+                break;
             }
-            if (cursor <= 0) {
-                result = nullptr;
-                return false;
-            }
+            if (cursor <= 0)
+                break;
             cursor--;
             for (int i = cursor; i < theend; i++) {
                 buffer[i] = buffer[i + 1];
