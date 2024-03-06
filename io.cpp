@@ -8,8 +8,8 @@
 static void test_prompt(const char *msg);
 static char hex2char(unsigned int hex);
 
-SerialPrinter gblobj::sout{ .prefix = "arduino> " };
-SerialPrinter gblobj::serr{ .prefix = "WARNING> " };
+SerialPrinter gblobj::sout{ .prefix = "sout> " };
+SerialPrinter gblobj::serr{ .prefix = "serr> " };
 
 void test::io()
 {
@@ -189,7 +189,7 @@ bool IO::takech(const int ch)
     return false;
 }
 
-void IO::sync(char *&msg)
+void IO::sync(char *&msg) const
 {
     msg = result;
 }
