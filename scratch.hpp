@@ -26,7 +26,7 @@ class IO {
     void (*prompt)(const char *msg);
 public:
     IO() = default;
-    IO(const IO &other) = default;
+    IO(const IO &other) = delete;
     ~IO() = default;
     void setPrompt(void (*prompt)(const char *msg));
     bool runPrompt(void);

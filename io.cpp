@@ -32,7 +32,10 @@ void test::serialprinter()
 
 void test_prompt(const char *const msg)
 {
-    std::cout << "\n[ECHO] " << msg << std::endl;
+    if (msg == nullptr)
+        std::cout << "\nLeaving the prompt...\n";
+    else
+        std::cout << "\n[ECHO] " << msg << std::endl;
 }
 
 char hex2char(const unsigned int hex)
