@@ -3,8 +3,6 @@
 #include <conio.h>
 #include "cscratch.h"
 
-#define NOT_A_SPECIAL_KEY (-1)
-
 static long long int longlongint_time(void);
 static void clear_console(void);
 static int smart_getch(void);
