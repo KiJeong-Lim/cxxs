@@ -57,12 +57,6 @@ bool IO::runPrompt()
 
     while (1) {
         ch = getc();
-        if (ch == 0) {
-            return false;
-        }
-        if (ch == ESC) {
-            return true;
-        }
         prompt_routine_breaked = takech(ch);
         if (prompt_routine_breaked) {
             sync(msg);
@@ -70,6 +64,8 @@ bool IO::runPrompt()
             clear();
             return true;
         }
+        else
+            return false;
     }
 }
 
