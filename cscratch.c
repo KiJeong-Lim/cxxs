@@ -49,7 +49,8 @@ int smart_getch()
     case 0x00:
     case 0xE0:
         special_key_flag = ch;
-        return _getch();
+        ch = _getch();
+        return ch;
     default:
         special_key_flag = NOT_A_SPECIAL_KEY;
         return ch;
