@@ -236,12 +236,12 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
         while (getline(file, line)) {
             if (line == std::string{ "cols" })
                 break;
-            rows.push_back(IntegerHelper::reads(line));
+            rows.push_back(IntegerHelper::scanIntegers(line));
         }
         while (getline(file, line)) {
             if (line == std::string{ "end" })
                 break;
-            cols.push_back(IntegerHelper::reads(line));
+            cols.push_back(IntegerHelper::scanIntegers(line));
         }
         file.close();
         return Nonogram{ .rows = rows, .cols = cols };

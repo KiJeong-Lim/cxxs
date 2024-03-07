@@ -1,6 +1,6 @@
 #include "scratch.hpp"
 
-std::vector<int> IntegerHelper::reads(const std::string &str)
+std::vector<int> IntegerHelper::scanIntegers(const std::string &str)
 {
     std::stringstream ss = static_cast<std::stringstream &&>(std::stringstream{ } << str);
     std::vector<int> xs = {};
@@ -17,7 +17,7 @@ std::vector<int> IntegerHelper::reads(const std::string &str)
     return xs;
 }
 
-std::string IntegerHelper::shows(const std::vector<int> &nums)
+std::string IntegerHelper::showIntegers(const std::vector<int> &nums)
 {
     const std::size_t l = nums.size();
     if (l == 0)

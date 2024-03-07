@@ -14,8 +14,8 @@
 
 class IntegerHelper {
 public:
-    static std::vector<int> reads(const std::string &str);
-    static std::string shows(const std::vector<int> &nums);
+    static std::vector<int> scanIntegers(const std::string &str);
+    static std::string showIntegers(const std::vector<int> &nums);
 };
 
 class IO {
@@ -130,12 +130,12 @@ public:
             const std::vector<int> &info;
             const std::size_t info_sz;
         public:
+            Generator() = delete;
             Generator(std::size_t line_sz, const std::vector<int> &info);
             Generator(const Generator &other) = delete;
             ~Generator();
             std::vector<std::vector<Cell>> findAllPossiblitiesCompatibleWith(const std::vector<Value_t> &reference);
         private:
-            Generator() = delete;
             bool accumulatePossiblities(Cell *start_point, std::size_t block_num, const std::vector<Value_t> &line_ref, std::vector<std::vector<Cell>> &accum);
         };
     };
