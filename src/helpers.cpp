@@ -21,8 +21,8 @@ std::string IntegerHelper::showIntegers(const std::vector<int> &nums)
 {
     const std::size_t l = nums.size();
     if (l == 0)
-        return std::string{ "" };
-    else {    
+        return "";
+    else {
         std::stringstream ss{ };
         ss << nums[0];
         for (std::size_t i = 1; i < l; i++)
