@@ -46,7 +46,7 @@ void test::nonogramsolverlogic()
 {
     int info[] = {2,1,3,2,};
     Nonogram::Cell line[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
-    Nonogram::Generator1D gen = {};
+    Nonogram::Generator1D gen{ };
 
     gen.init(line, len(line), info, len(info));
     gen.attach(debug_Generator1D_callback);
