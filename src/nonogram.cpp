@@ -235,11 +235,10 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                 combo++;
                 if (int2size_t(t) == row.size()) {
                     bool invalid = false;
+
                     for (std::size_t j = 0; j < n; j++)
-                        if ((line[j] & at(i, j)) == NEITHER) {
+                        if ((line[j] & at(i, j)) == NEITHER)
                             invalid = true;
-                            break;
-                        }
                     if (!invalid)
                         for (std::size_t j = 0; j < n; j++)
                             result[j] &= line[j];
@@ -251,7 +250,7 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                     t++;
                     break;
                 }
-                while (--t >= 0) {
+                while (--t >= 0)
             default:
                     if (s != 2 && ptr_list[t] < line + n) {
                         ptr_list[t][-row[t]] = EMPTY;
@@ -268,7 +267,6 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                         for (int k = 0; k < row[t]; k++)
                             *--ptr_list[t] = EMPTY;
                     }
-                }
             }
         for (std::size_t j = 0; j < n; j++)
             if (result[j] != NEITHER && at(i, j) == UNKNOWN) {
@@ -306,11 +304,10 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                 combo++;
                 if (int2size_t(t) == col.size()) {
                     bool invalid = false;
+
                     for (std::size_t i = 0; i < m; i++)
-                        if ((line[i] & at(i, j)) == NEITHER) {
+                        if ((line[i] & at(i, j)) == NEITHER)
                             invalid = true;
-                            break;
-                        }
                     if (!invalid)
                         for (std::size_t i = 0; i < m; i++)
                             result[i] &= line[i];
@@ -322,7 +319,7 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                     t++;
                     break;
                 }
-                while (--t >= 0) {
+                while (--t >= 0)
             default:
                     if (s != 2 && ptr_list[t] < line + m) {
                         ptr_list[t][-col[t]] = EMPTY;
@@ -339,7 +336,6 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                         for (int k = 0; k < col[t]; k++)
                             *--ptr_list[t] = EMPTY;
                     }
-                }
             }
         for (std::size_t i = 0; i < m; i++)
             if (result[i] != NEITHER && at(i, j) == UNKNOWN) {
