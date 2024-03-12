@@ -201,7 +201,7 @@ std::string Nonogram::Solver::solve()
         return res.str();
     }
     else
-        return std::string{ "cannot solve the puzzle..." };
+        return std::string{ "cannot solve the puzzle...\n" };
 }
 
 void Nonogram::Solver::clear()
@@ -218,6 +218,7 @@ Nonogram::Solver::Cell &Nonogram::Solver::at(const std::size_t i, const std::siz
 bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
 {
     bool has_changed = false, all_done = true;
+
     if (!row_dones[i]) {
         int combo = 0, s = 0, t = 0;
         Cell *const line = new int [n], *const result = new Cell [n], **const ptr_list = new Cell *[row.size()];
@@ -269,18 +270,16 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                     }
                 }
             }
-        for (std::size_t j = 0; j < n; j++) {
+        for (std::size_t j = 0; j < n; j++)
             if (result[j] != NEITHER && at(i, j) == UNKNOWN) {
                 at(i, j) = result[j];
                 has_changed = true;
             }
-        }
         delete[] line;
         delete[] result;
         delete[] ptr_list;
-        for (std::size_t j = 0; j < n; j++) {
+        for (std::size_t j = 0; j < n; j++)
             all_done &= (at(i, j) != UNKNOWN);
-        }
         if (all_done)
             row_dones[i] = true;
     }
@@ -290,9 +289,11 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
 bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
 {
     bool has_changed = false, all_done = true;
+
     if (!col_dones[j]) {
         int combo = 0, s = 0, t = 0;
         Cell *const line = new Cell [m], *const result = new Cell [m], **const ptr_list = new Cell *[col.size()];
+
         for (std::size_t i = 0; i < m; i++) {
             line[i] = EMPTY;
             result[i] = at(i, j);
@@ -340,18 +341,16 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                     }
                 }
             }
-        for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t i = 0; i < m; i++)
             if (result[i] != NEITHER && at(i, j) == UNKNOWN) {
                 at(i, j) = result[i];
                 has_changed = true;
             }
-        }
         delete[] line;
         delete[] result;
         delete[] ptr_list;
-        for (std::size_t i = 0; i < m; i++) {
+        for (std::size_t i = 0; i < m; i++)
             all_done &= (at(i, j) != UNKNOWN);
-        }
         if (all_done)
             col_dones[j] = true;
     }
