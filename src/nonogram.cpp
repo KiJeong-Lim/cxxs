@@ -242,7 +242,7 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                             result[j] &= line[j];
                 }
                 else {
-                    ptr_list[t] = t == 0 ? line : ptr_list[t - 1] + 1;
+                    ptr_list[t] = (t == 0 ? line : ptr_list[t - 1] + 1);
                     for (int k = 0; k < row[t]; k++)
                         *ptr_list[t]++ = STAR;
                     t++;
@@ -311,7 +311,7 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                             result[i] &= line[i];
                 }
                 else {
-                    ptr_list[t] = t == 0 ? line : ptr_list[t - 1] + 1;
+                    ptr_list[t] = (t == 0 ? line : ptr_list[t - 1] + 1);
                     for (int k = 0; k < col[t]; k++)
                         *ptr_list[t]++ = STAR;
                     t++;
