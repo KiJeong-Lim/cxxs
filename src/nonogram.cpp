@@ -146,9 +146,8 @@ Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> 
     : m{ rows.size() }, n{ cols.size() }, rows{ rows }, cols{ cols }, row_dones{ Array<bool>(m, false) }, col_dones{ Array<bool>(n, false) }, board{ nullptr }
 {
     board = new Cell [m * n];
-    for (std::size_t i = 0; i < m * n; i++) {
+    for (std::size_t i = 0; i < m * n; i++)
         board[i] = UNKNOWN;
-    }
 }
 
 Nonogram::Solver::~Solver()
@@ -177,7 +176,7 @@ std::string Nonogram::Solver::solve()
         std::stringstream res{ };
 
         for (std::size_t i = 0; i < m; i++) {
-            for (std::size_t j = 0; j < n; j++) {
+            for (std::size_t j = 0; j < n; j++)
                 switch(at(i, j)) {
                 case NEITHER:
                     res << ' ';
@@ -192,9 +191,8 @@ std::string Nonogram::Solver::solve()
                     res << '?';
                     break;
                 default:
-                    res << 'x';
+                    res << 'X';
                 }
-            }
             res << '\n';
         }
         res << '\n';
