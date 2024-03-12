@@ -8,8 +8,8 @@
 static void test_prompt(const char *msg);
 static char hex2char(unsigned int hex);
 
-SerialPrinter gblobj::sout{ .prefix = "sout> " };
-SerialPrinter gblobj::serr{ .prefix = "serr> " };
+SerialPrinter scratch::sout{ .prefix = "sout> " };
+SerialPrinter scratch::serr{ .prefix = "serr> " };
 
 void test::io()
 {
@@ -26,8 +26,8 @@ void test::io()
 
 void test::serialprinter()
 {
-    gblobj::sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
-    gblobj::sout << "world" << ' ' << 5678 << ' ' << 2.718281;
+    scratch::sout << "hello" << ' ' << 1234 << ' ' << 3.141592;
+    scratch::sout << "world" << ' ' << 5678 << ' ' << 2.718281;
 }
 
 void test_prompt(const char *const msg)

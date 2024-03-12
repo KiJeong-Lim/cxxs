@@ -91,7 +91,7 @@ public:
 
 class SerialPrinter {
     typedef unsigned char byte;
-    char const *const msg_prefix;
+    const char *const msg_prefix;
     bool mknewline;
 public:
     SerialPrinter() = delete;
@@ -112,16 +112,12 @@ private:
     void trick();
 };
 
-namespace gblobj
+namespace scratch
 {
     extern SerialPrinter sout;
     extern SerialPrinter serr;
-}
-
-namespace prog
-{
     void solvenonogram(void);
-    void scratch(void);
+    void main(void);
 }
 
 namespace test

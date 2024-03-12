@@ -4,9 +4,10 @@
 
 template <typename ELEM> using Array = std::vector<ELEM>;
 
-void prog::solvenonogram()
+void scratch::solvenonogram()
 {
     std::string file_name{ };
+
     std::cout << "Enter the file name of the Nonogram puzzle: ";
     std::cout.flush();
     std::cin >> file_name;
@@ -14,6 +15,7 @@ void prog::solvenonogram()
         auto puzzle = Nonogram::scanPuzzle(file_name.c_str());
         auto solver = puzzle.mkSolver();
         auto solution = solver.solve();
+
         std::cout << std::endl;
         std::cout << solution;
     }
@@ -48,12 +50,9 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
         if (file.bad()) {
             throw Exception{ "***Nonogram::scanPuzzle(): cannot open the file...\n" };
         }
-        getline(file, line);
-        if (line == std::string{ "" }) {
-            throw Exception{ "***Nonogram::scanPuzzle(): cannot open the file...\n" };
-        }
-        if (line != std::string{ "rows" }) {
-            throw Exception{ "***Nonogram::scanPuzzle(): expected \'rows\'...\n" };
+        while (getline(file, line)) {
+            if (line == std::string{ "rows" })
+                break;
         }
         while (getline(file, line)) {
             if (line == std::string{ "cols" })
@@ -71,10 +70,6 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
     catch (const Nonogram::Exception &e) {
         file.close();
         std::cout << e.what();
-        throw e;
-    }
-    catch (const std::exception &e) {
-        file.close();
         throw e;
     }
 }
@@ -130,8 +125,19 @@ bool Nonogram::isWellFormed() const
 
 Nonogram::Solver Nonogram::mkSolver() const
 {
-    if (isWellFormed())
+    if (isWellFormed()) {
+        Array<Array<int>> rows = this->rows, cols = this->cols;
+
+        for (std::size_t i = 0; i < this->rows.size(); i++) {
+            if (this->rows[i].size() == 1 && this->rows[i][0] == 0)
+                rows[i] = Array<int>{ };
+        }
+        for (std::size_t j = 0; j < this->cols.size(); j++) {
+            if (this->cols[j].size() == 1 && this->cols[j][0] == 0)
+                cols[j] = Array<int>{ };
+        }
         return Solver{ .rows = rows, .cols = cols };
+    }
     else
         throw Exception{ "***Nonogram::mkSolver(): puzzle ill-formed...\n" };
 }
@@ -152,8 +158,7 @@ Nonogram::Solver::~Solver()
 
 std::string Nonogram::Solver::solve()
 {
-    bool has_changed = true;
-    bool all_done = true;
+    bool has_changed = true, all_done = true;
 
     while (has_changed) {
         has_changed = false;
@@ -170,6 +175,7 @@ std::string Nonogram::Solver::solve()
 
     if (all_done) {
         std::stringstream res{ };
+
         for (std::size_t i = 0; i < m; i++) {
             for (std::size_t j = 0; j < n; j++) {
                 switch(at(i, j)) {
@@ -213,63 +219,56 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
 {
     bool has_changed = false, all_done = true;
     if (!row_dones[i]) {
-        int go = 0, combo = 0, z = 0;
-        Cell *const line = new int [n], *const result = new int [n], **const ptr_list = new int *[row.size()];
+        int combo = 0, s = 0, t = 0;
+        Cell *const line = new int [n], *const result = new Cell [n], **const ptr_list = new Cell *[row.size()];
+
         for (std::size_t j = 0; j < n; j++) {
             line[j] = EMPTY;
             result[j] = at(i, j);
         }
-        for (std::size_t k = 0; k < row.size(); k++) {
+        for (std::size_t k = 0; k < row.size(); k++)
             ptr_list[k] = nullptr;
-        }
-        for (go = 0; z >= 0; go /= 2) {
-            switch (go) {
+        for (s = 0; t >= 0; s /= 2)
+            switch (s) {
             case 0:
                 combo++;
-                if (int2size_t(z) == row.size()) {
+                if (int2size_t(t) == row.size()) {
                     bool invalid = false;
-                    for (std::size_t j = 0; j < n; j++) {
+                    for (std::size_t j = 0; j < n; j++)
                         if ((line[j] & at(i, j)) == NEITHER) {
                             invalid = true;
                             break;
                         }
-                    }
-                    if (!invalid) {
-                        for (std::size_t j = 0; j < n; j++) {
+                    if (!invalid)
+                        for (std::size_t j = 0; j < n; j++)
                             result[j] &= line[j];
-                        }
-                    }
                 }
                 else {
-                    ptr_list[z] = z == 0 ? line : ptr_list[z - 1] + 1;
-                    for (int k = 0; k < row[z]; k++) {
-                        *ptr_list[z]++ = STAR;
-                    }
-                    z++;
+                    ptr_list[t] = t == 0 ? line : ptr_list[t - 1] + 1;
+                    for (int k = 0; k < row[t]; k++)
+                        *ptr_list[t]++ = STAR;
+                    t++;
                     break;
                 }
-                while (--z >= 0) {
+                while (--t >= 0) {
             default:
-                    if (go != 2 && ptr_list[z] < line + n) {
-                        ptr_list[z][-row[z]] = EMPTY;
-                        *ptr_list[z]++ = STAR;
+                    if (s != 2 && ptr_list[t] < line + n) {
+                        ptr_list[t][-row[t]] = EMPTY;
+                        *ptr_list[t]++ = STAR;
                         combo = 0;
-                        z++;
+                        t++;
                         break;
                     }
                     else {
-                        go = 2;
-                        if (combo == 0) {
+                        s = 2;
+                        if (combo == 0)
                             break;
-                        }
                         combo--;
-                        for (int k = 0; k < row[z]; k++) {
-                            *--ptr_list[z] = EMPTY;
-                        }
+                        for (int k = 0; k < row[t]; k++)
+                            *--ptr_list[t] = EMPTY;
                     }
                 }
             }
-        }
         for (std::size_t j = 0; j < n; j++) {
             if (result[j] != NEITHER && at(i, j) == UNKNOWN) {
                 at(i, j) = result[j];
@@ -279,12 +278,12 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
         delete[] line;
         delete[] result;
         delete[] ptr_list;
+        for (std::size_t j = 0; j < n; j++) {
+            all_done &= (at(i, j) != UNKNOWN);
+        }
+        if (all_done)
+            row_dones[i] = true;
     }
-    for (std::size_t j = 0; j < n; j++) {
-        all_done &= (at(i, j) != UNKNOWN);
-    }
-    if (all_done)
-        row_dones[i] = true;
     return has_changed;
 }
 
@@ -292,63 +291,55 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
 {
     bool has_changed = false, all_done = true;
     if (!col_dones[j]) {
-        int go = 0, combo = 0, z = 0;
-        Cell *const line = new int [m], *const result = new int [m], **const ptr_list = new int *[col.size()];
+        int combo = 0, s = 0, t = 0;
+        Cell *const line = new Cell [m], *const result = new Cell [m], **const ptr_list = new Cell *[col.size()];
         for (std::size_t i = 0; i < m; i++) {
             line[i] = EMPTY;
             result[i] = at(i, j);
         }
-        for (std::size_t k = 0; k < col.size(); k++) {
+        for (std::size_t k = 0; k < col.size(); k++)
             ptr_list[k] = nullptr;
-        }
-        for (go = 0; z >= 0; go /= 2) {
-            switch (go) {
+        for (s = 0; t >= 0; s /= 2)
+            switch (s) {
             case 0:
                 combo++;
-                if (int2size_t(z) == col.size()) {
+                if (int2size_t(t) == col.size()) {
                     bool invalid = false;
-                    for (std::size_t i = 0; i < m; i++) {
+                    for (std::size_t i = 0; i < m; i++)
                         if ((line[i] & at(i, j)) == NEITHER) {
                             invalid = true;
                             break;
                         }
-                    }
-                    if (!invalid) {
-                        for (std::size_t i = 0; i < m; i++) {
+                    if (!invalid)
+                        for (std::size_t i = 0; i < m; i++)
                             result[i] &= line[i];
-                        }
-                    }
                 }
                 else {
-                    ptr_list[z] = z == 0 ? line : ptr_list[z - 1] + 1;
-                    for (int k = 0; k < col[z]; k++) {
-                        *ptr_list[z]++ = STAR;
-                    }
-                    z++;
+                    ptr_list[t] = t == 0 ? line : ptr_list[t - 1] + 1;
+                    for (int k = 0; k < col[t]; k++)
+                        *ptr_list[t]++ = STAR;
+                    t++;
                     break;
                 }
-                while (--z >= 0) {
+                while (--t >= 0) {
             default:
-                    if (go != 2 && ptr_list[z] < line + m) {
-                        ptr_list[z][-col[z]] = EMPTY;
-                        *ptr_list[z]++ = STAR;
+                    if (s != 2 && ptr_list[t] < line + m) {
+                        ptr_list[t][-col[t]] = EMPTY;
+                        *ptr_list[t]++ = STAR;
                         combo = 0;
-                        z++;
+                        t++;
                         break;
                     }
                     else {
-                        go = 2;
-                        if (combo == 0) {
+                        s = 2;
+                        if (combo == 0)
                             break;
-                        }
                         combo--;
-                        for (int k = 0; k < col[z]; k++) {
-                            *--ptr_list[z] = EMPTY;
-                        }
+                        for (int k = 0; k < col[t]; k++)
+                            *--ptr_list[t] = EMPTY;
                     }
                 }
             }
-        }
         for (std::size_t i = 0; i < m; i++) {
             if (result[i] != NEITHER && at(i, j) == UNKNOWN) {
                 at(i, j) = result[i];
@@ -358,11 +349,11 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
         delete[] line;
         delete[] result;
         delete[] ptr_list;
+        for (std::size_t i = 0; i < m; i++) {
+            all_done &= (at(i, j) != UNKNOWN);
+        }
+        if (all_done)
+            col_dones[j] = true;
     }
-    for (std::size_t i = 0; i < m; i++) {
-        all_done &= (at(i, j) != UNKNOWN);
-    }
-    if (all_done)
-        col_dones[j] = true;
     return has_changed;
 }
