@@ -52,10 +52,10 @@ public:
     class Solver {
     public:
         typedef int Cell;
-        static constexpr Cell NEITHER = 0;
-        static constexpr Cell EMPTY = 1;
-        static constexpr Cell STAR = 2;
-        static constexpr Cell UNKNOWN = 3;
+        static constexpr Cell BOTHPOSSIBLE = 0; // We can conclude both the cell [could be black] and [could be white]
+        static constexpr Cell WHITE = 1; // We can conclude the cell [must be white]
+        static constexpr Cell BLACK = 2; // We can conclude the cell [must be black]
+        static constexpr Cell INDETERMINED = 3; // We cannot conclude whether the cell [must be black] or [must be white] 
     private:
         const std::size_t m;
         const std::size_t n;

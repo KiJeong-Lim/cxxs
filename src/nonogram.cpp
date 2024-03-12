@@ -147,7 +147,7 @@ Nonogram::Solver::Solver(const Array<Array<int>> &rows, const Array<Array<int>> 
 {
     board = new Cell [m * n];
     for (std::size_t i = 0; i < m * n; i++)
-        board[i] = UNKNOWN;
+        board[i] = INDETERMINED;
 }
 
 Nonogram::Solver::~Solver()
@@ -177,17 +177,17 @@ std::string Nonogram::Solver::solve()
 
         for (std::size_t i = 0; i < m; i++) {
             for (std::size_t j = 0; j < n; j++)
-                switch(at(i, j)) {
-                case NEITHER:
-                    res << ' ';
+                switch (at(i, j)) {
+                case BOTHPOSSIBLE:
+                    res << '_';
                     break;
-                case EMPTY:
+                case WHITE:
                     res << '.';
                     break;
-                case STAR:
+                case BLACK:
                     res << '#';
                     break;
-                case UNKNOWN:
+                case INDETERMINED:
                     res << '?';
                     break;
                 default:
@@ -219,10 +219,10 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
 
     if (!row_dones[i]) {
         int combo = 0, s = 0, t = 0;
-        Cell *const line = new int [n], *const result = new Cell [n], **const ptr_list = new Cell *[row.size()];
+        Cell *const line = new Cell [n], *const result = new Cell [n], **const ptr_list = new Cell *[row.size()];
 
         for (std::size_t j = 0; j < n; j++) {
-            line[j] = EMPTY;
+            line[j] = WHITE;
             result[j] = at(i, j);
         }
         for (std::size_t k = 0; k < row.size(); k++)
@@ -235,7 +235,7 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                     bool invalid = false;
 
                     for (std::size_t j = 0; j < n; j++)
-                        if ((line[j] & at(i, j)) == NEITHER)
+                        if ((line[j] & at(i, j)) == BOTHPOSSIBLE)
                             invalid = true;
                     if (!invalid)
                         for (std::size_t j = 0; j < n; j++)
@@ -244,15 +244,15 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                 else {
                     ptr_list[t] = (t == 0 ? line : ptr_list[t - 1] + 1);
                     for (int k = 0; k < row[t]; k++)
-                        *ptr_list[t]++ = STAR;
+                        *ptr_list[t]++ = BLACK;
                     t++;
                     break;
                 }
                 while (--t >= 0)
             default:
                     if (s != 2 && ptr_list[t] < line + n) {
-                        ptr_list[t][-row[t]] = EMPTY;
-                        *ptr_list[t]++ = STAR;
+                        ptr_list[t][-row[t]] = WHITE;
+                        *ptr_list[t]++ = BLACK;
                         combo = 0;
                         t++;
                         break;
@@ -263,11 +263,11 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                             break;
                         combo--;
                         for (int k = 0; k < row[t]; k++)
-                            *--ptr_list[t] = EMPTY;
+                            *--ptr_list[t] = WHITE;
                     }
             }
         for (std::size_t j = 0; j < n; j++)
-            if (result[j] != NEITHER && at(i, j) == UNKNOWN) {
+            if (result[j] != BOTHPOSSIBLE && at(i, j) == INDETERMINED) {
                 at(i, j) = result[j];
                 has_changed = true;
             }
@@ -275,7 +275,7 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
         delete[] result;
         delete[] ptr_list;
         for (std::size_t j = 0; j < n; j++)
-            all_done &= (at(i, j) != UNKNOWN);
+            all_done &= (at(i, j) != INDETERMINED);
         if (all_done)
             row_dones[i] = true;
     }
@@ -291,7 +291,7 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
         Cell *const line = new Cell [m], *const result = new Cell [m], **const ptr_list = new Cell *[col.size()];
 
         for (std::size_t i = 0; i < m; i++) {
-            line[i] = EMPTY;
+            line[i] = WHITE;
             result[i] = at(i, j);
         }
         for (std::size_t k = 0; k < col.size(); k++)
@@ -304,7 +304,7 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                     bool invalid = false;
 
                     for (std::size_t i = 0; i < m; i++)
-                        if ((line[i] & at(i, j)) == NEITHER)
+                        if ((line[i] & at(i, j)) == BOTHPOSSIBLE)
                             invalid = true;
                     if (!invalid)
                         for (std::size_t i = 0; i < m; i++)
@@ -313,15 +313,15 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                 else {
                     ptr_list[t] = (t == 0 ? line : ptr_list[t - 1] + 1);
                     for (int k = 0; k < col[t]; k++)
-                        *ptr_list[t]++ = STAR;
+                        *ptr_list[t]++ = BLACK;
                     t++;
                     break;
                 }
                 while (--t >= 0)
             default:
                     if (s != 2 && ptr_list[t] < line + m) {
-                        ptr_list[t][-col[t]] = EMPTY;
-                        *ptr_list[t]++ = STAR;
+                        ptr_list[t][-col[t]] = WHITE;
+                        *ptr_list[t]++ = BLACK;
                         combo = 0;
                         t++;
                         break;
@@ -332,11 +332,11 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
                             break;
                         combo--;
                         for (int k = 0; k < col[t]; k++)
-                            *--ptr_list[t] = EMPTY;
+                            *--ptr_list[t] = WHITE;
                     }
             }
         for (std::size_t i = 0; i < m; i++)
-            if (result[i] != NEITHER && at(i, j) == UNKNOWN) {
+            if (result[i] != BOTHPOSSIBLE && at(i, j) == INDETERMINED) {
                 at(i, j) = result[i];
                 has_changed = true;
             }
@@ -344,7 +344,7 @@ bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
         delete[] result;
         delete[] ptr_list;
         for (std::size_t i = 0; i < m; i++)
-            all_done &= (at(i, j) != UNKNOWN);
+            all_done &= (at(i, j) != INDETERMINED);
         if (all_done)
             col_dones[j] = true;
     }
