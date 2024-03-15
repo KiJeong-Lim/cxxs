@@ -162,9 +162,9 @@ std::string Nonogram::Solver::solve()
     while (has_changed) {
         has_changed = false;
         for (std::size_t i = 0; i < m; i++)
-            has_changed |= traverseRow(i, rows[i]);
+            has_changed |= traverseRow(i);
         for (std::size_t j = 0; j < n; j++)
-            has_changed |= traverseCol(j, cols[j]);
+            has_changed |= traverseCol(j);
     }
 
     for (std::size_t i = 0; i < m; i++)
@@ -213,11 +213,12 @@ Nonogram::Solver::Cell &Nonogram::Solver::at(const std::size_t i, const std::siz
     return board[i * n + j];
 }
 
-bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
+bool Nonogram::Solver::traverseRow(const std::size_t i)
 {
     bool has_changed = false, all_done = true;
 
     if (!row_dones[i]) {
+        const Array<int> &row = rows[i];
         int combo = 0, s = 0, t = 0;
         Cell *const line = new Cell [n], *const result = new Cell [n], **const ptr_list = new Cell *[row.size()];
 
@@ -235,8 +236,10 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
                     bool decidable = true;
 
                     for (std::size_t j = 0; j < n; j++)
-                        if ((line[j] & at(i, j)) == BOTHPOSSIBLE)
-                            decidable = false;
+                        if ((line[j] & at(i, j)) == BOTHPOSSIBLE) {                            
+                            decidable = true;
+                            break;
+                        }
                     if (decidable)
                         for (std::size_t j = 0; j < n; j++)
                             result[j] &= line[j];
@@ -282,11 +285,12 @@ bool Nonogram::Solver::traverseRow(const std::size_t i, const Array<int> &row)
     return has_changed;
 }
 
-bool Nonogram::Solver::traverseCol(const std::size_t j, const Array<int> &col)
+bool Nonogram::Solver::traverseCol(const std::size_t j)
 {
     bool has_changed = false, all_done = true;
 
     if (!col_dones[j]) {
+        const Array<int> &col = cols[j];
         int combo = 0, s = 0, t = 0;
         Cell *const line = new Cell [m], *const result = new Cell [m], **const ptr_list = new Cell *[col.size()];
 
