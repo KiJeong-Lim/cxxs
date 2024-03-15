@@ -73,8 +73,8 @@ public:
         void clear(void);
     private:
         Cell &at(std::size_t i, std::size_t j);
-        bool traverseRow(std::size_t i, const std::vector<int> &row);
-        bool traverseCol(std::size_t j, const std::vector<int> &col);
+        bool traverseRow(std::size_t i);
+        bool traverseCol(std::size_t j);
     };
 private:
     std::vector<std::vector<int>> rows;
