@@ -117,6 +117,7 @@ namespace scratch
     extern SerialPrinter sout;
     extern SerialPrinter serr;
     void solvenonogram(void);
+    void fifteenpuzzle(void);
     void main(void);
 }
 

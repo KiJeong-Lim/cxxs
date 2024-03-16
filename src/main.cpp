@@ -15,7 +15,8 @@ void scratch::main()
     std::cout << std::endl;
     std::cout << "[Menu]\n";
     std::cout << "\n";
-    std::cout << "#1 NonogramSolver\n";
+    std::cout << "#1 Solve nonogram\n";
+    std::cout << "#2 Solve 15-puzzle\n";
     std::cout << "\n";
     std::cout << "Enter the number of the menu: ";
     std::cout.flush();
@@ -24,6 +25,9 @@ void scratch::main()
         switch (menu) {
         case 1:
             scratch::solvenonogram();
+            break;
+        case 2:
+            scratch::fifteenpuzzle();
             break;
         default:
             std::cout << "No menu selected...\n";

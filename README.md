@@ -2,17 +2,18 @@
 
 Dev-C++ `-std=c++17 -O3`
 
-## Nonogram Solver Example
+## Nonogram Solver
 
 ```
 <><> Project: scratch <><><><><><><>
 
 [Menu]
 
-#1 NonogramSolver
+#1 Solve nonogram
+#2 Solve 15-puzzle
 
 Enter the number of the menu: 1
-Enter the file name of the Nonogram puzzle: ../etc/nonogramtest.txt
+Enter the file name of the Nonogram puzzle: ../etc/nonogrampuzzle1.txt
 
 ..######..
 .##....##.
@@ -25,6 +26,21 @@ Enter the file name of the Nonogram puzzle: ../etc/nonogramtest.txt
 ....##....
 ....##....
 
+
+Press any key...
+```
+
+## 15-puzzle
+
+```
+<><> Project: scratch <><><><><><><>
+
+[Menu]
+
+#1 Solve nonogram
+#2 Solve 15-puzzle
+
+Enter the number of the menu: 2
 
 Press any key...
 ```
