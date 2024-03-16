@@ -143,7 +143,7 @@ public:
     {
     }
     MaxHeap(bool (*const greater_than)(const ELEM &lhs, const ELEM &rhs), const ELEM &default_value)
-        : _greater_than{ [greater_than](const ELEM &lhs, const ELEM &rhs){ return greater_than(&lhs, &rhs); } }, _default_value{ default_value }, _elems{ Array<ELEM>(N, _default_value) }, _size{ 0 }
+        : _greater_than{ greater_than }, _default_value{ default_value }, _elems{ Array<ELEM>(N, _default_value) }, _size{ 0 }
     {
     }
     ~MaxHeap()
