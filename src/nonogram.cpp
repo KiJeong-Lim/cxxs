@@ -2,8 +2,6 @@
 
 #define DEBUG 1
 
-template <typename ELEM> using Array = std::vector<ELEM>;
-
 void scratch::solvenonogram()
 {
     std::string file_name{ };

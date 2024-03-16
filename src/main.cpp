@@ -2,7 +2,7 @@
 
 int main(void)
 {
-    scratch::main();
+    test::heap();
     return 0;
 }
 

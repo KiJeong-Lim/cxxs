@@ -12,10 +12,29 @@
 
 #include "cscratch.h"
 
+template <typename ELEM>
+using Array = std::vector<ELEM>;
+
+using String = std::string;
+
+using Nat = std::size_t;
+
+template <typename ARRAY>
+constexpr Nat len(const ARRAY &xs)
+{
+    return xs.size();
+}
+
+template <typename ELEM, Nat SIZE>
+constexpr Nat len(const ELEM (&xs)[SIZE]) noexcept
+{
+    return SIZE;
+}
+
 class IntegerHelper {
 public:
-    static std::vector<int> scanIntegers(const std::string &str);
-    static std::string showIntegers(const std::vector<int> &nums);
+    static Array<int> scanIntegers(const String &str);
+    static String showIntegers(const Array<int> &nums);
 };
 
 class IO {
@@ -42,7 +61,7 @@ class Nonogram {
 public:
     class Exception : public std::exception {
     private:
-        std::string err_msg;
+        String err_msg;
     public:
         Exception(const char *err_msg);
         ~Exception() = default;
@@ -59,17 +78,17 @@ public:
     private:
         const std::size_t m;
         const std::size_t n;
-        const std::vector<std::vector<int>> rows;
-        const std::vector<std::vector<int>> cols;
-        std::vector<bool> row_dones;
-        std::vector<bool> col_dones;
+        const Array<Array<int>> rows;
+        const Array<Array<int>> cols;
+        Array<bool> row_dones;
+        Array<bool> col_dones;
         Cell *board;
     public:
-        Solver(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
+        Solver(const Array<Array<int>> &rows, const Array<Array<int>> &cols);
         Solver() = delete;
         ~Solver();
         Solver(const Solver &rhs) = default;
-        std::string solve(void);
+        String solve(void);
         void clear(void);
     private:
         Cell &at(std::size_t i, std::size_t j);
@@ -77,10 +96,10 @@ public:
         bool traverseCol(std::size_t j);
     };
 private:
-    std::vector<std::vector<int>> rows;
-    std::vector<std::vector<int>> cols;
+    Array<Array<int>> rows;
+    Array<Array<int>> cols;
 public:
-    Nonogram(const std::vector<std::vector<int>> &rows, const std::vector<std::vector<int>> &cols);
+    Nonogram(const Array<Array<int>> &rows, const Array<Array<int>> &cols);
     Nonogram() = delete;
     ~Nonogram() = default;
     Nonogram(const Nonogram &other) = default;
@@ -105,11 +124,87 @@ public:
     SerialPrinter operator<<(const char *s);
     SerialPrinter operator<<(char c);
     SerialPrinter operator<<(double v);
-    SerialPrinter operator<<(const std::string &s);
+    SerialPrinter operator<<(const String &s);
     SerialPrinter operator<<(const std::stringstream &ss);
 private:
     SerialPrinter(const char *prefix, bool lend);
     void trick();
+};
+
+template <typename ELEM, Nat N>
+class MaxHeap {
+    bool (*const _greater_than)(const ELEM &lhs, const ELEM &rhs);
+    const ELEM _default_value;
+    Array<ELEM> _elems;
+    int _size;
+public:
+    MaxHeap()
+        : _greater_than{ [](const ELEM &lhs, const ELEM &rhs){ return lhs > rhs; } }, _default_value{ 0 }, _elems{ Array<ELEM>(N, _default_value) }, _size{ 0 }
+    {
+    }
+    MaxHeap(bool (*const greater_than)(const ELEM &lhs, const ELEM &rhs), const ELEM &default_value)
+        : _greater_than{ [greater_than](const ELEM &lhs, const ELEM &rhs){ return greater_than(&lhs, &rhs); } }, _default_value{ default_value }, _elems{ Array<ELEM>(N, _default_value) }, _size{ 0 }
+    {
+    }
+    ~MaxHeap()
+    {
+    }
+    MaxHeap(const MaxHeap &other) = delete;
+    MaxHeap(MaxHeap &&other) = delete;
+    Nat size(void)
+    {
+        return int2size_t(_size);
+    }
+    bool isEmpty(void)
+    {
+        return size() == 0;
+    }
+    bool isFull(void)
+    {
+        return size() == N;
+    }
+    void heapify(Nat i)
+    {
+        for (Nat p = i; true; i = p) {
+            const Nat l = 2 * i + 1;
+            const Nat r = 2 * i + 2;
+            if (l < N && _greater_than(_elems[l], _elems[p]))
+                p = l;
+            if (r < N && _greater_than(_elems[r], _elems[p]))
+                p = r;
+            if (p == i) 
+                break;
+            std::swap(_elems[i], _elems[p]);
+        }
+    }
+    bool push(const ELEM &new_elem)
+    {
+        if (isFull())
+            return false;
+        else {
+            _size++;
+            _elems[_size] = new_elem;
+            for (int i = (N / 2) - 1; i >= 0; i--)
+                heapify(i);
+            return true;
+        }
+    }
+    ELEM pop(void)
+    {
+        if (isEmpty()) {
+            return ELEM{ };
+        }
+        else {
+            const ELEM res = _elems[0];
+            _elems[0] = _elems[_size];
+            _elems[_size] = _default_value;
+            _size--;
+            for (int i = (N / 2) - 1; i >= 0; i--) {
+                heapify(i);
+            }
+            return res;
+        }
+    }
 };
 
 namespace scratch
@@ -124,6 +219,7 @@ namespace scratch
 namespace test
 {
     void io(void);
+    void heap(void);
     void serialprinter(void);
     void foo(void);
 }
