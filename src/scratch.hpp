@@ -7,6 +7,7 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -151,15 +152,15 @@ public:
     }
     MaxHeap(const MaxHeap &other) = delete;
     MaxHeap(MaxHeap &&other) = delete;
-    Nat size(void)
+    Nat size(void) const
     {
         return int2size_t(_size);
     }
-    bool isEmpty(void)
+    bool isEmpty(void) const
     {
         return size() == 0;
     }
-    bool isFull(void)
+    bool isFull(void) const
     {
         return size() == N;
     }
@@ -184,22 +185,28 @@ public:
         else {
             _size++;
             _elems[_size] = new_elem;
-            for (int i = (N / 2) - 1; i >= 0; i--)
+            for (int i = (int)(N / 2) - 1; i >= 0; i--)
                 heapify(i);
             return true;
         }
     }
+    const ELEM &top(void) const
+    {
+        if (isEmpty())
+            throw std::out_of_range{ "the heap is empty\n" };
+        else
+            return _elems[0];
+    }
     ELEM pop(void)
     {
-        if (isEmpty()) {
-            return ELEM{ };
-        }
+        if (isEmpty())
+            throw std::out_of_range{ "the heap is empty\n" };
         else {
             const ELEM res = _elems[0];
             _elems[0] = _elems[_size];
             _elems[_size] = _default_value;
             _size--;
-            for (int i = (N / 2) - 1; i >= 0; i--) {
+            for (int i = (int)(N / 2) - 1; i >= 0; i--) {
                 heapify(i);
             }
             return res;
