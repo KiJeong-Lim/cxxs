@@ -1,4 +1,5 @@
 #include "scratch.hpp"
+#include "maxheap.hpp"
 
 void test::heap()
 {
