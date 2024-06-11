@@ -86,7 +86,7 @@ bool Nonogram::isWellFormed() const
             return false;
     for (std::size_t i = 0; i < m; i++)
         if (rows[i][0] == 0) {
-            if (rows.size() > 1)
+            if (rows[i].size() != 1)
                 return false;
         }
         else {
@@ -105,7 +105,7 @@ bool Nonogram::isWellFormed() const
         }
     for (std::size_t j = 0; j < n; j++)
         if (cols[j][0] == 0) {
-            if (cols[j].size() > 1)
+            if (cols[j].size() != 1)
                 return false;
         }
         else {
