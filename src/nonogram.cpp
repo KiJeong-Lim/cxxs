@@ -48,16 +48,16 @@ Nonogram Nonogram::scanPuzzle(const char *const file_name)
         if (file.bad()) {
             throw Exception{ "***Nonogram::scanPuzzle(): cannot open the file...\n" };
         }
-        while (getline(file, line)) {
+        while (std::getline(file, line)) {
             if (line == std::string{ "rows" })
                 break;
         }
-        while (getline(file, line)) {
+        while (std::getline(file, line)) {
             if (line == std::string{ "cols" })
                 break;
             rows.push_back(IntegerHelper::scanIntegers(line));
         }
-        while (getline(file, line)) {
+        while (std::getline(file, line)) {
             if (line == std::string{ "end" })
                 break;
             cols.push_back(IntegerHelper::scanIntegers(line));
