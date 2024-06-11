@@ -20,7 +20,6 @@ using String = std::string;
 
 using Nat = std::size_t;
 
-template<typename ELEM>
 Nat len(const String &str)
 {
     return str.length();
