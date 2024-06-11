@@ -86,9 +86,7 @@ bool Nonogram::isWellFormed() const
             return false;
     for (std::size_t i = 0; i < m; i++)
         if (rows[i][0] == 0) {
-            if (rows.size() == 1)
-                continue;
-            else
+            if (rows.size() > 1)
                 return false;
         }
         else {
@@ -107,9 +105,7 @@ bool Nonogram::isWellFormed() const
         }
     for (std::size_t j = 0; j < n; j++)
         if (cols[j][0] == 0) {
-            if (cols[j].size() == 1)
-                continue;
-            else
+            if (cols[j].size() > 1)
                 return false;
         }
         else {
@@ -135,11 +131,11 @@ Nonogram::Solver Nonogram::mkSolver() const
         Array<Array<int>> rows = this->rows, cols = this->cols;
 
         for (std::size_t i = 0; i < this->rows.size(); i++) {
-            if (this->rows[i].size() == 1 && this->rows[i][0] == 0)
+            if (this->rows[i][0] == 0)
                 rows[i] = Array<int>{ };
         }
         for (std::size_t j = 0; j < this->cols.size(); j++) {
-            if (this->cols[j].size() == 1 && this->cols[j][0] == 0)
+            if (this->cols[j][0] == 0)
                 cols[j] = Array<int>{ };
         }
         return Solver{ .rows = rows, .cols = cols };
