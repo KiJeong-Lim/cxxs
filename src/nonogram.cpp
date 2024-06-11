@@ -111,7 +111,7 @@ bool Nonogram::isWellFormed() const
                     return false;
                 else {
                     if (t == 0)
-                        t += cols[j][k];
+                        t = cols[j][k];
                     else
                         t += cols[j][k] + 1;
                 }
