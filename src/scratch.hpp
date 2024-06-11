@@ -21,19 +21,19 @@ using String = std::string;
 using Nat = std::size_t;
 
 template<typename ELEM>
-constexpr Nat len(const String &str)
+Nat len(const String &str)
 {
     return str.length();
 }
 
 template<typename ELEM>
-constexpr Nat len(const Array<ELEM> &xs)
+Nat len(const Array<ELEM> &vec)
 {
-    return xs.size();
+    return vec.size();
 }
 
 template<typename ELEM, Nat SIZE>
-constexpr Nat len(const ELEM (&xs)[SIZE]) noexcept
+constexpr Nat len(const ELEM (&ary)[SIZE]) noexcept
 {
     return SIZE;
 }
