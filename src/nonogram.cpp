@@ -236,7 +236,6 @@ bool Nonogram::Solver::traverseRow(const std::size_t i)
                 combo++;
                 if (int2size_t(t) == row.size()) {
                     bool decidable = true;
-
                     for (std::size_t j = 0; j < n; j++)
                         if ((line[j] & at(i, j)) == BOTHPOSSIBLE) {                            
                             decidable = false;
@@ -308,7 +307,6 @@ bool Nonogram::Solver::traverseCol(const std::size_t j)
                 combo++;
                 if (int2size_t(t) == col.size()) {
                     bool decidable = true;
-
                     for (std::size_t i = 0; i < m; i++)
                         if ((line[i] & at(i, j)) == BOTHPOSSIBLE) {
                             decidable = false;
