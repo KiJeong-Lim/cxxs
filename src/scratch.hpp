@@ -13,20 +13,26 @@
 
 #include "cscratch.h"
 
-template <typename ELEM>
+template<typename ELEM>
 using Array = std::vector<ELEM>;
 
 using String = std::string;
 
 using Nat = std::size_t;
 
-template <typename ARRAY>
-constexpr Nat len(const ARRAY &xs)
+template<typename ELEM>
+constexpr Nat len(const String &str)
+{
+    return str.length();
+}
+
+template<typename ELEM>
+constexpr Nat len(const Array<ELEM> &xs)
 {
     return xs.size();
 }
 
-template <typename ELEM, Nat SIZE>
+template<typename ELEM, Nat SIZE>
 constexpr Nat len(const ELEM (&xs)[SIZE]) noexcept
 {
     return SIZE;
