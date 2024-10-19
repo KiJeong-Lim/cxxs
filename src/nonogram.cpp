@@ -27,11 +27,6 @@ Nonogram::Exception::Exception(const char *const err_msg)
 {
 }
 
-const char *Nonogram::Exception::what() const throw ()
-{
-    return err_msg.c_str();
-}
-
 Nonogram::Nonogram(const Array<Array<int>> &rows, const Array<Array<int>> &cols)
     : rows{ rows }, cols{ cols }
 {

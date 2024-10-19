@@ -20,7 +20,7 @@ using String = std::string;
 
 using Nat = std::size_t;
 
-inline
+static inline
 Nat len(const String &str)
 {
     return str.length();
@@ -73,7 +73,10 @@ public:
         Exception(const char *err_msg);
         ~Exception() = default;
         Exception(const Exception &other) = default;
-        const char *what(void) const throw ();
+        const char *what(void) const noexcept override
+        {
+            return err_msg.c_str();
+        }
     };
     class Solver {
     public:
