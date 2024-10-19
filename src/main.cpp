@@ -2,7 +2,6 @@
 
 int main(void)
 {
-    test::heap();
     return 0;
 }
 

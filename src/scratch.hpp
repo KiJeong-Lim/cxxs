@@ -20,6 +20,7 @@ using String = std::string;
 
 using Nat = std::size_t;
 
+inline
 Nat len(const String &str)
 {
     return str.length();
